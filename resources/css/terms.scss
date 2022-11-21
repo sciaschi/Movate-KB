@@ -1,0 +1,42 @@
+$rating-1: #00cec9;
+$rating-2: #00b894;
+$rating-3: #0984e3;
+$rating-4: #74b9ff;
+$rating-5: #ffa502;
+$rating-6: #ff7675;
+$rating-7: #e74c3c;
+$rating-8: #d63031;
+
+.ra-term-rating {
+    &.rating-1 {
+        background-color:$rating-1;
+    }
+
+    &.rating-2 {
+        background-color:$rating-2;
+    }
+
+    &.rating-3 {
+        background-color:$rating-3;
+    }
+
+    &.rating-4 {
+        background-color:$rating-4;
+    }
+
+    &.rating-5 {
+        background-color:$rating-5;
+    }
+
+    &.rating-6 {
+        background-color:$rating-6;
+    }
+
+    &.rating-7 {
+        background-color:$rating-7;
+    }
+
+    &.rating-8 {
+        background-color:$rating-8;
+    }
+}
