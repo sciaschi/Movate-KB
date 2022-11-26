@@ -31,20 +31,26 @@
     },
     "dependencies": {
         "@hotwired/turbo": "^7.2.4",
+        "@inertiajs/core": "^1.0.0-beta.1",
         "@inertiajs/inertia": "^0.11.1",
         "@inertiajs/inertia-vue3": "^0.6.0",
         "@inertiajs/progress": "^0.2.7",
         "@inertiajs/server": "^0.1.0",
         "@meilisearch/instant-meilisearch": "^0.9.0",
         "@popperjs/core": "^2.11.6",
-        "@sweetalert2/theme-dark": "^5.0.14",
+        "@sweetalert2/theme-dark": "^5.0.15",
+        "@tinymce/tinymce-vue": "^4.0.7",
         "@vue/server-renderer": "^3.2.45",
         "bootstrap": "^5.2.2",
         "gridjs": "^5.1.0",
         "meilisearch": "^0.29.1",
+        "moment": "^2.29.4",
         "perfect-scrollbar": "^1.5.5",
-        "sweetalert2": "^11.6.9",
+        "sweetalert2": "^11.6.14",
+        "tinymce": "^6.2.0",
+        "vue-router": "^4.1.6",
         "webpack-node-externals": "^3.0.0",
-        "webpack-rtl-plugin": "^2.0.0"
+        "webpack-rtl-plugin": "^2.0.0",
+        "ziggy-js": "^1.5.0"
     }
 }

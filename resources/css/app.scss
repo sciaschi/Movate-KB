@@ -1,7 +1,6 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-@import '@sweetalert2/theme-dark/dark.scss';
 @import 'table';
 @import 'terms';
 @import 'dark';
@@ -21,12 +20,35 @@ html, body {
     height: 100%;
 }
 
+#app {
+    min-height: 100vh;
+}
+
 #a-nav {
     width: 16em;
 }
 
 #admin-container {
     padding-left: 0;
+}
+
+#trends-container {
+    margin-left: 5px;
+}
+
+.trend-card {
+    height: 8vw!important;
+}
+
+.trend-card-body {
+    height:80px;
+}
+.trend-card-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 3;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
 }
 
 main {
@@ -203,12 +225,12 @@ html.admin {
     border-radius: 5px;
 }
 
-.ra-term-date {
-    width:30%;
+#detailRatingSpan {
+    vertical-align: 5px;
+
 }
 
 .ra-term-rating {
-    margin-top: -5px;
     margin-right: 10px;
 }
 

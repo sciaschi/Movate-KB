@@ -13,9 +13,7 @@ use Inertia\Inertia;
 class DashboardController extends Controller
 {
     public function index() {
-        $embed = new Embed();
-
-        return inertia('Dashboard/Index', [
+        return Inertia::render('Dashboard/Index', [
             'can-add-trend' => auth()->user()->can('add-trend')
         ]);
     }

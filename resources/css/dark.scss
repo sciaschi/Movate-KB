@@ -1,6 +1,32 @@
 html.dark {
-    .gridjs-wrapper {
-        border-top-width: 0;
-        border-bottom-width: 0;
+    @import '@sweetalert2/theme-dark';
+
+    input,
+    textarea{
+        background-color: #111827;
+        border-color:#1f2937;
+        color: white;
+
+        &:focus {
+            background-color: #111827;
+            color: white;
+        }
+    }
+
+    input,
+    textarea{
+        background-color: #111827;
+        border-color:#1f2937;
+        color: white;
+
+        &:focus {
+            background-color: #111827;
+            color: white;
+        }
+    }
+
+    .term_search_value.active {
+        --tw-bg-opacity: 1!important;
+        background-color: #3730a3!important;
     }
 }

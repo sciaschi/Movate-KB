@@ -1,7 +1,8 @@
 {
-    "/js/app.js": "/js/app.js?id=b0e177d3b03ea54517f7189cab4b4a6f",
-    "/css/app.css": "/css/app.css?id=a82dcc8db557ff63712cbbe5864b883f",
-    "/js/search.js": "/js/search.js?id=80a657668030153f28da2d355451710c",
-    "/js/dashboard.js": "/js/dashboard.js?id=c517e0d78e3302ba30bdb57a01367297",
-    "/js/utils.js": "/js/utils.js?id=483dba835f142699668ac7c3977df13e"
+    "/js/app.js": "/js/app.js?id=676dd539768c39fedb26069080872ee7",
+    "/css/app.css": "/css/app.css?id=3754bb0f24d46387d6b436d1329766db",
+    "/js/search.js": "/js/search.js?id=797d71a8e7c6d08f490f3a14d7babf05",
+    "/js/dashboard.js": "/js/dashboard.js?id=d614846433e78f581a38bc666d1e4c81",
+    "/js/table-builder.js": "/js/table-builder.js?id=72250ccd2f31683ef41cad1b67f92b10",
+    "/js/utils.js": "/js/utils.js?id=ebf26000c707c137278048506161a31d"
 }

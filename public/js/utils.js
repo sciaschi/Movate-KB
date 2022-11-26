@@ -1,4 +1,28 @@
+class RollingTrigger
+{
+    constructor(onTrigger, waitMs) {
+        this.onTrigger = onTrigger;
+        this.waitMs = waitMs;
+        this.timeoutId = null;
+    }
+
+    invoke() {
+        let context = this,
+            args    = arguments;
+
+        if (this.timeoutId) {
+            clearInterval(this.timeoutId);
+        }
+
+        this.timeoutId = setTimeout(function() {
+            context.timeoutId = null;
+            context.onTrigger.call(null, ...args);
+        }, this.waitMs);
+    }
+}
+
 let utils = {
+    rollingTrigger: RollingTrigger,
     ratingColors: [
         {
             bg: "#00cec9",

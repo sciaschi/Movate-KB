@@ -7,19 +7,34 @@
 import './bootstrap';
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
+import Layout from "./Shared/Layout";
+import route from 'ziggy-js'
+import { ZiggyVue } from 'ziggy';
+import { Ziggy } from './ziggy';
+import {InertiaProgress} from '@inertiajs/progress'
+
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
  * registering components with the application instance so they are ready
  * to use in your application's views. An example is included for you.
  */
+InertiaProgress.init({ color: '#006bff' });
 
 createInertiaApp({
-    resolve: name => require(`./Pages/${name}`),
+    resolve: name => {
+        const page = require(`./Pages/${name}`).default
+        page.layout = page.layout || Layout
+        return page
+    },
     title: title => title ? `${title}` : 'Movate Activision KB',
-    setup({ el, App, props, plugin }) {
+    setup({ el, App, props, plugin, ZiggyVue }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .mixin({ methods: { route } }) // add it
+            .use(ZiggyVue)
             .mount(el)
     },
-})
+});
+
+

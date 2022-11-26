@@ -14,75 +14,22 @@
         <link rel="stylesheet" href="{{asset('css/app.min.css')}}">
 
         {{-- Inertia --}}
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll,NodeList.prototype.forEach,Promise,Object.values,Object.assign" defer></script>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll,NodeList.prototype.forEach,Promise,Object.values,Object.assign"></script>
 
-        {{-- Ping CRM --}}
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.startsWith" defer></script>
+        {{-- Main --}}
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.startsWith"></script>
 
-        <script src="{{ mix('/js/app.js') }}" defer></script>
+        @routes
 
         @inertiaHead
-
     </head>
-    <body class="font-sans leading-none text-gray-700 antialiased">
-        @include('layouts.navigation')
+    <body class="dark:bg-slate-900 font-sans leading-none text-gray-700 antialiased">
+        @inertia
 
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white dark:bg-slate-800 shadow">
-                    <div class="dark:text-slate-400 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main>
-                @inertia
-            </main>
-        </div>
-
-        <script>
-            var lightMode = document.getElementById('toggle-check')
-
-            if(localStorage.theme == 'light'){
-                lightMode.checked = true;
-
-                setTimeout(function(){
-                    localStorage.theme = 'light';
-                    document.documentElement.classList.remove("dark")
-                },100);
-            }else{
-                lightMode.checked = false;
-
-                setTimeout(function(){
-                    localStorage.theme = 'dark';
-                    document.documentElement.classList.add("dark")
-                },100);
-            }
-
-            lightMode.addEventListener('change',function(){
-                if(localStorage.theme == 'light') {
-                    setTimeout(function(){
-                        localStorage.theme = 'dark';
-                        lightMode.checked = false;
-                        document.documentElement.classList.add("dark")
-                    },100);
-
-                }else{
-                    setTimeout(function(){
-                        localStorage.theme = 'light';
-                        lightMode.checked = true;
-                        document.documentElement.classList.remove("dark")
-                    },100);
-                }
-            })
-        </script>
-
-        <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-        <script src="{{asset('js/libraries/moment/moment.js')}}"></script>
+        <script src="{{ asset('js/libraries/moment/moment.js') }}"></script>
         <script src="{{ asset('js/utils.js') }}"></script>
+        <script src="{{ asset('js/table-builder.js') }}"></script>
+        <script src="{{ mix('/js/app.js') }}"></script>
     </body>
 </html>

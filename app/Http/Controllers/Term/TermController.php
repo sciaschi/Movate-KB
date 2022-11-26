@@ -12,6 +12,7 @@ use App\Models\Term\Term;
 use App\Models\TermLink\TermLink;
 use App\Http\Controllers\Controller as Controller;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 use MeiliSearch\Client;
 use Throwable;
 
@@ -52,10 +53,12 @@ class TermController extends Controller
 
     /**
      * Index Page
-     * @return Application|Factory|View
+     * @return \Inertia\Response
      */
     public function index() {
-        return view('frontend.terms', ['terms' => $this->terms]);
+        return Inertia::render('SearchTerms/Index', [
+            'can-add-term' => auth()->user()->can('add-term')
+        ]);
     }
 
     /**
@@ -63,7 +66,7 @@ class TermController extends Controller
      * @return Term[]
      */
     public function getAllTerms() {
-        return Term::with('links')->get();
+        return Term::with('links')->orderBy('term', 'asc')->get();
     }
 
     /**
