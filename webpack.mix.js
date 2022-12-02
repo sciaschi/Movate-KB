@@ -35,8 +35,6 @@ mix
     'resources/js/app.js'
 ], 'js')
 .vue()
-.copy('resources/js/search.js', 'public/js/search.js')
-.copy('resources/js/dashboard.js', 'public/js/dashboard.js')
 .copy('resources/js/table-builder.js', 'public/js/table-builder.js')
 .copy('resources/js/utils.js', 'public/js/utils.js')
 .sass('resources/css/app.scss', 'css')

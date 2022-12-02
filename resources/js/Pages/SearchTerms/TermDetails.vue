@@ -23,7 +23,7 @@
                  v-html="term.description">
             </div>
         </div>
-        <div v-show="term.links.length" class="col-12">
+        <div v-show="term.links ? term.links.length : false" class="col-12">
             <div id="detailsLinksTable">
                 <table class="table-auto static-table">
                     <thead>

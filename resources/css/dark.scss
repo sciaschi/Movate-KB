@@ -1,20 +1,10 @@
 html.dark {
     @import '@sweetalert2/theme-dark';
 
-    input,
-    textarea{
-        background-color: #111827;
-        border-color:#1f2937;
-        color: white;
-
-        &:focus {
-            background-color: #111827;
-            color: white;
-        }
-    }
-
-    input,
-    textarea{
+    input[type=text],
+    input[type=search],
+    select,
+    textarea {
         background-color: #111827;
         border-color:#1f2937;
         color: white;
@@ -28,5 +18,67 @@ html.dark {
     .term_search_value.active {
         --tw-bg-opacity: 1!important;
         background-color: #3730a3!important;
+    }
+
+    .nav-item {
+        background-color: #111827!important;
+
+        a {
+            color: #64748b!important;
+            border-bottom: 1px #312e81 solid;
+
+            &:hover {
+                background-color: #3730a3!important;
+                color: #e2e8f0!important;
+            }
+
+            &.active {
+                background-color: #3730a3!important;
+                color: #e2e8f0!important;
+            }
+        }
+
+        &:hover {
+            background-color: #3730a3!important;
+        }
+
+        &:first-child {
+            border-radius: 5px 5px 0 0!important;
+        }
+
+        &:nth-last-child(2) {
+            a {
+                margin-bottom: 10px;
+            }
+        }
+
+        &:last-child {
+            border-radius: 0 0 5px 5px!important;
+        }
+    }
+
+    .dataTable {
+        background-color:#1f2937;
+        color: #fff;
+
+        tr {
+            &:hover {
+                td {
+                    background-color:#312e81;
+                    color: #fff;
+                }
+            }
+        }
+
+        td {
+            background-color:#111827;
+            color: #fff;
+        }
+    }
+
+    .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter,
+    .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing,
+    .dataTables_wrapper .dataTables_paginate {
+        color: #fff;
     }
 }

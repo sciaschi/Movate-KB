@@ -78,6 +78,70 @@ class TermController extends Controller
     }
 
     /**
+     * Add new term
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addTerm(Request $request) {
+        $data = (array) json_decode($request->getContent());
+
+        $validated = Validator::make($data, [
+            'term'          => 'required|string',
+            'rating'        => 'required|integer',
+            'description'   => 'required|string'
+        ]);
+
+        // Validate the request...
+        if($validated->fails())
+        {
+            return response()->json([
+                "status" => false,
+                "message" => $validated->errors()->all()
+            ], 500);
+        }
+
+        $termObj = new Term();
+
+        $termObj->term        = $data['term'];
+        $termObj->rating      = $data['rating'];
+        $termObj->description = $data['description'];
+
+        $links = [];
+
+        if(isset($data['links']))
+        {
+            foreach($data['links'] as $link) {
+                $links[] = [
+                    'id'       => isset($link->id) ? intval($link->id) : 0,
+                    'link_url' => strip_tags($link->link_url),
+                    'term_id'  => intval($data['id']) ?? $data['id']
+                ];
+            }
+
+            $links = collect($links);
+
+            $termObj->links()->saveMany($links);
+        }
+
+        if($res = $termObj->save())
+        {
+            return response()->json([
+                "status"    => true,
+                "data"      => $termObj
+            ]);
+        }
+        else
+        {
+            return response()->json([
+                "status"    => false,
+                "response"  => $res
+            ], 500);
+        }
+
+    }
+
+    /**
      * Update Term
      * @throws Throwable
      */

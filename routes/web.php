@@ -18,18 +18,19 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function() {
-        Route::get('/dashboard', 'App\Http\Controllers\User\Dashboard\DashboardController@index')->name('dashboard');
-        Route::post('/trend/store', 'App\Http\Controllers\User\Dashboard\DashboardController@storeTrendUrl')->name('add_trend');
-        Route::get('/trend/get-trends', 'App\Http\Controllers\User\Dashboard\DashboardController@getTrends')->name('get_trends');
+        Route::get('/dashboard'         , 'App\Http\Controllers\User\Dashboard\DashboardController@index')->name('dashboard');
+        Route::post('/trend/store'      , 'App\Http\Controllers\User\Dashboard\DashboardController@storeTrendUrl')->name('add_trend');
+        Route::get('/trend/get-trends'  , 'App\Http\Controllers\User\Dashboard\DashboardController@getTrends')->name('get_trends');
 
-        Route::get('/term/get-recently-added-terms', 'App\Http\Controllers\Term\TermController@getRecentlyAddedTerms')->name('get-recently-added-terms');
-        Route::get('/term/get-all-terms', 'App\Http\Controllers\Term\TermController@getAllTerms')->name('get-all-terms');
-        Route::get('/term/term-links-by-id/{id}', 'App\Http\Controllers\Term\TermController@getTermLinksById')->name('get-term-links-by-id');
-        Route::put('/term/update-term', 'App\Http\Controllers\Term\TermController@updateTerm')->name('update-term');
-        Route::post('/term/delete-term-link', 'App\Http\Controllers\Term\TermController@deleteTermLink')->name('delete-term-link');
+        Route::get('/term/get-recently-added-terms' , 'App\Http\Controllers\Term\TermController@getRecentlyAddedTerms')->name('get-recently-added-terms');
+        Route::get('/term/get-all-terms'            , 'App\Http\Controllers\Term\TermController@getAllTerms')->name('get-all-terms');
+        Route::get('/term/term-links-by-id/{id}'    , 'App\Http\Controllers\Term\TermController@getTermLinksById')->name('get-term-links-by-id');
+        Route::put('/term/update-term'              , 'App\Http\Controllers\Term\TermController@updateTerm')->name('update-term');
+        Route::post('/term/add-term'                , 'App\Http\Controllers\Term\TermController@addTerm')->name('add-term');
+        Route::post('/term/delete-term-link'        , 'App\Http\Controllers\Term\TermController@deleteTermLink')->name('delete-term-link');
 
-        Route::get('/search-terms', 'App\Http\Controllers\Term\TermController@index')->name('terms');
-        Route::post('/search-term/store', 'App\Http\Controllers\Term\TermController@store')->name('add_term');
+        Route::get('/search-terms'       , 'App\Http\Controllers\Term\TermController@index')->name('terms');
+        Route::post('/search-term/store' , 'App\Http\Controllers\Term\TermController@store')->name('add_term');
 });
 
 

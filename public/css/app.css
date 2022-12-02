@@ -1121,9 +1121,6 @@ select {
 .leading-7 {
   line-height: 1.75rem !important;
 }
-.leading-none {
-  line-height: 1 !important;
-}
 .tracking-wider {
   letter-spacing: 0.05em !important;
 }
@@ -2474,24 +2471,17 @@ html.dark body.swal2-toast-shown .swal2-container.swal2-bottom-end, html.dark bo
   bottom: 0;
   left: auto;
 }
-html.dark input,
+html.dark input[type=text],
+html.dark input[type=search],
+html.dark select,
 html.dark textarea {
   background-color: #111827;
   border-color: #1f2937;
   color: white;
 }
-html.dark input:focus,
-html.dark textarea:focus {
-  background-color: #111827;
-  color: white;
-}
-html.dark input,
-html.dark textarea {
-  background-color: #111827;
-  border-color: #1f2937;
-  color: white;
-}
-html.dark input:focus,
+html.dark input[type=text]:focus,
+html.dark input[type=search]:focus,
+html.dark select:focus,
 html.dark textarea:focus {
   background-color: #111827;
   color: white;
@@ -2499,6 +2489,50 @@ html.dark textarea:focus {
 html.dark .term_search_value.active {
   --tw-bg-opacity: 1!important;
   background-color: #3730a3 !important;
+}
+html.dark .nav-item {
+  background-color: #111827 !important;
+}
+html.dark .nav-item a {
+  color: #64748b !important;
+  border-bottom: 1px #312e81 solid;
+}
+html.dark .nav-item a:hover {
+  background-color: #3730a3 !important;
+  color: #e2e8f0 !important;
+}
+html.dark .nav-item a.active {
+  background-color: #3730a3 !important;
+  color: #e2e8f0 !important;
+}
+html.dark .nav-item:hover {
+  background-color: #3730a3 !important;
+}
+html.dark .nav-item:first-child {
+  border-radius: 5px 5px 0 0 !important;
+}
+html.dark .nav-item:nth-last-child(2) a {
+  margin-bottom: 10px;
+}
+html.dark .nav-item:last-child {
+  border-radius: 0 0 5px 5px !important;
+}
+html.dark .dataTable {
+  background-color: #1f2937;
+  color: #fff;
+}
+html.dark .dataTable tr:hover td {
+  background-color: #312e81;
+  color: #fff;
+}
+html.dark .dataTable td {
+  background-color: #111827;
+  color: #fff;
+}
+html.dark .dataTables_wrapper .dataTables_length, html.dark .dataTables_wrapper .dataTables_filter,
+html.dark .dataTables_wrapper .dataTables_info, html.dark .dataTables_wrapper .dataTables_processing,
+html.dark .dataTables_wrapper .dataTables_paginate {
+  color: #fff;
 }
 
 :root {
@@ -2510,6 +2544,16 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  line-height: 1.5;
+}
+
+.action-btn {
+  margin-right: 10px;
+}
+
+header {
+  height: 80px;
+  line-height: 80px;
 }
 
 #app {
@@ -2522,6 +2566,10 @@ html, body {
 
 #admin-container {
   padding-left: 0;
+}
+
+.sidebar {
+  width: 15%;
 }
 
 #trends-container {
@@ -2758,6 +2806,25 @@ table.rounded {
 .list-group-item:last-child {
   border-bottom-right-radius: 5px !important;
   border-bottom-left-radius: 5px !important;
+}
+
+.nav-item:first-child {
+  border-radius: 5px 5px 0 0;
+}
+.nav-item:last-child {
+  border-radius: 0 0 5px 5px;
+}
+.nav-item:last-child a {
+  margin-bottom: 10px;
+}
+
+.users-table {
+  margin-top: 10px !important;
+}
+
+.sidebar-header {
+  height: 20%;
+  border-bottom: 1px #312e81 solid;
 }
 
 .hover\:border-gray-300:hover {

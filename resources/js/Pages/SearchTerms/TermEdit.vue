@@ -1,15 +1,15 @@
 <template>
     <div id="editPanel" class="row p-3">
         <div class="col-6 mt-2">
-            <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white" :class="'rating-' + term.rating">{{ term.rating }}</span></label>
-            <input type="range" class="form-range" min="1" max="8" id="edit-rating" :value="term.rating">
+            <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white" :class="!adding ? 'rating-'+ term.rating : 'rating-1'">{{ !adding ? term.rating : '1' }}</span></label>
+            <input type="range" class="form-range" min="1" max="8" id="edit-rating" :value="!adding ? term.rating : '1'">
         </div>
         <div class="col-6 mt-2">
             <span>Date</span>
-            <p id="edit-date" class="fs-6">{{ formatSelectedTermDate(term.created_at) }}</p>
+            <p id="edit-date" class="fs-6">{{ !adding ? formatSelectedTermDate(term.created_at) : formatSelectedTermDate(Date()) }}</p>
         </div>
         <div class="col-12  mt-2">
-            <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="term.term">
+            <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
         </div>
         <div class="col-12  mt-2">
             <editor api-key="b28l0twrnfpoia2kkfocy20i6yvxkem4m1nptacdtkz0aslk" :init="{
@@ -26,13 +26,13 @@
                     class: 'static-table table-auto'
                 },
                 table_default_styles: {
-                    width: '100%',
+                    width   : '100%',
                     overflow: 'hidden'
                 },
                 table_header_type: 'auto',
                 skin: (useDarkMode ? 'oxide-dark' : ''),
                 content_css: (useDarkMode ? 'dark' : '')
-            }" id="edit-description" class="form-control" rows="3" placeholder="Notes/Nuances (if any)" :initial-value="term.description"></editor>
+            }" id="edit-description" class="form-control" rows="3" placeholder="Notes/Nuances (if any)" :initial-value="!adding ? term.description : ''"></editor>
         </div>
         <div class="col-6 mt-2 float-right">
             <div class="input-group">
@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="col-12 mt-2">
-            <button id="save-term-edit-btn" type="button" class="btn btn-outline-success float-right" @click="updateTerm">
+            <button id="save-term-edit-btn" type="button" class="btn btn-outline-success float-right" @click="!adding ? updateTerm() : addTerm()">
                 <i class="fa-regular fa-floppy-disk"></i> Save
             </button>
         </div>
@@ -81,7 +81,8 @@ import Editor from '@tinymce/tinymce-vue';
 export default {
     name: "TermEdit",
     props: {
-        term: Object
+        term: Object,
+        adding: Boolean
     },
     components: {
         'moment': moment,
@@ -92,13 +93,34 @@ export default {
             links: []
         }
     },
-    emits: ['updateEditTerm'],
+    emits: ['updateEditTerm', 'addNewTerm'],
     methods: {
         formatSelectedTermDate: function (date) {
             return moment(date).format("MMMM Do YYYY");
         },
         useDarkMode: function() {
             return window.matchMedia('(prefers-color-scheme: dark)').matches
+        },
+        addTerm: function() {
+            var context   = this,
+                inputData = {
+                    term: document.getElementById('edit-term-val').value,
+                    rating: document.getElementById('edit-rating').value,
+                    description: tinymce.get("edit-description").getContent(),
+                    links: this.links
+                };
+
+            axios.post('/term/add-term', inputData)
+                .then(function (response) {
+                    var data = response.data;
+                    context.$emit('addNewTerm', data.data);
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
         },
         updateTerm: function () {
             var context   = this,
@@ -136,7 +158,7 @@ export default {
         }
     },
     mounted() {
-        this.links = [...this.term.links];
+        this.links = this.term ? [...this.term.links] : [];
 
         document.getElementById("edit-rating").addEventListener('input',function() {
             var val = $(this).val();
