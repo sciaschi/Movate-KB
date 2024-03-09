@@ -2,78 +2,84 @@
     <header>
         <span class="header-text">Accuracy Scores</span>
     </header>
-    <table class="users-table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-        </tr>
-        </thead>
-    </table>
+
+    <div class="container table-container">
+        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users-with-accuracies')" :columns="columns"></fx-table>
+    </div>
 
 </template>
 
 <script>
 import AdminLayout from "../../../Shared/Admin/AdminLayout";
-import DataTable from "datatables.net";
 import {Inertia} from "@inertiajs/inertia";
+import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
+import route from "ziggy-js";
 
 export default {
     name: "Index",
     layout: AdminLayout,
     components: {
-        DataTable
+        FxTable
     },
     data() {
         return {
-            table: null
+            columns: []
         }
     },
     methods: {
+        route,
         viewHistoricalData: function(id) {
-            console.log("Clicked view historical accuracy data " + id);
-            Inertia.visit(route('admin.grade-accuracy'))
+            Inertia.visit(route('admin.accuracy-history', {id: id}));
         },
         addNewAccuracyData: function(id) {
-            console.log("Clicked add new accuracy data " + id);
-            Inertia.visit(route('admin.grade-accuracy'))
+            Inertia.visit(route('admin.grade-accuracy', {id: id}));
         },
-    },
-    mounted() {
-        var context = this;
+        tableMounted: function () {
+            document.querySelectorAll('.users-table tbody button.vhd').forEach((e) => {
+                e.onclick = (el) => {
+                    var id = el.currentTarget.dataset.id;
+                    this.viewHistoricalData(id);
+                };
+            });
 
-        this.table = new DataTable('.users-table', {
-            ajax: {
-                url: '/admin/get-users',
-                dataSrc: 'data'
+            document.querySelectorAll('.users-table tbody button.ana').forEach((e) => {
+                e.onclick = (el) => {
+                    var id = el.currentTarget.dataset.id;
+                    this.addNewAccuracyData(id);
+                };
+            });
+        }
+    },
+    beforeMount() {
+        this.columns = [
+            {
+                id: 'name',
+                name: 'Name'
             },
-            columns: [
-                {data: 'id', name: 'ID'},
-                {data: 'name', name: 'Name'},
-                {data: 'email', name: 'Email'},
-                {
-                    "data": null,
-                    "sortable": false,
-                    "render": function (o) {
-                        return '<button title="View Historical Accuracies" class="vhd action-btn" data-id="' + o.id + '"><i class="fa-regular fa-eye"></i></button>' +
-                               '<button title="Create new Accuracy Data" class="ana action-btn" data-id="' + o.id + '"><i class="fa-solid fa-pen"></i></button>';
-                    }
+            {
+                id: 'email',
+                name: 'Email'
+            },
+            {
+                data: 'accuracy_score',
+                name: 'Accuracy Score',
+                render: function (data) {
+                    console.log('%', data)
+                    return data.accuracy_score + '% ' + ' (Last Update: ' + data.last_updated + ')';
                 }
-            ]
-        });
-
-        $('.users-table tbody').on('click', 'button.vhd', function (e) {
-            var id = e.currentTarget.dataset.id;
-            context.viewHistoricalData(id);
-        }).on('click', 'button.ana', function (e) {
-            var id = e.currentTarget.dataset.id;
-            context.addNewAccuracyData(id);
-        });
+            },
+            {
+                id: null,
+                render: function(data) {
+                    return '<button title="View Historical Accuracies" class="vhd action-btn" data-id="' + data.id + '"><i class="fa-regular fa-eye"></i></button>' +
+                        '<button title="Create new Accuracy Data" class="ana action-btn" data-id="' + data.id + '"><i class="fa-solid fa-circle-plus"></i></button>';
+                },
+                name: 'Actions'
+            },
+        ];
     },
+
     beforeUnmount() {
-        this.table.destroy();
     }
 }
 </script>

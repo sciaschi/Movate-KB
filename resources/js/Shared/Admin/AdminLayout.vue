@@ -1,7 +1,7 @@
 <template>
     <admin-navigation />
 
-    <div class="container float-right pt-4 text-white overflow-y-scroll overflow-x-hidden">
+    <div class="container float-right pt-4 pr-4 text-white of-y-scroll">
         <slot />
     </div>
 </template>
@@ -26,7 +26,7 @@ export default {
         return { user }
     },
     mounted() {
-        this.$el.parentElement.classList = 'bg-gray-100 dark:bg-slate-900';
+        this.$el.parentElement.classList = 'bg-gray-100 dark:bg-slate-900 overflow-y-hidden';
     }
 }
 </script>

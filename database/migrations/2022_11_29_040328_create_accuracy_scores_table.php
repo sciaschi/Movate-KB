@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('terms', function (Blueprint $table) {
+        Schema::create('accuracy_scores', function (Blueprint $table) {
             $table->id();
-            $table->string('term', 150);
-            $table->smallInteger('rating')->default(1);
-            $table->mediumText('description');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('admin_id');
+            $table->string('username');
+            $table->boolean('mod_flagged');
+            $table->boolean('admin_flagged');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('terms');
+        Schema::dropIfExists('accuracy_scores');
     }
 };

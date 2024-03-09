@@ -2,51 +2,80 @@
     <header>
         <span class="header-text">Users</span>
     </header>
-    <table class="users-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-            </tr>
-        </thead>
-    </table>
+    <div class="header-content">
+        <button type="button" @click="createNewUser" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New</button>
+    </div>
+    <div class="container table-container">
+        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users')" :columns="columns"></fx-table>
+    </div>
 </template>
 
 <script>
-import DataTable from 'datatables.net'
 import AdminLayout from "../../../Shared/Admin/AdminLayout";
+import {Inertia} from "@inertiajs/inertia";
+import route from "ziggy-js";
+import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
 
 export default {
     name: "Index",
     layout: AdminLayout,
     components: {
-        DataTable
+        FxTable
     },
     data() {
         return {
-            table: null
+            columns: []
         }
     },
-    mounted() {
-        this.table = new DataTable('.users-table', {
-            ajax: {
-                url: '/admin/get-users',
-                dataSrc: 'data'
-            },
-            columns: [
-                {data: 'id', name: 'ID'},
-                {data: 'name', name: 'Name'},
-                {data: 'email', name: 'Email'},
-            ]
-        })
+    methods: {
+        route,
+        editUser: function (id) {
+            Inertia.visit(route('admin.users.edit', {id: id}));
+        },
+        deleteUser: function (id) {
+        },
+        createNewUser: function () {
+            Inertia.visit(route('admin.users.create'));
+        },
+        tableMounted: function () {
+            document.querySelectorAll('.users-table tbody button.edit').forEach((e) => {
+                e.onclick = (el) => {
+                    var id = el.currentTarget.dataset.id;
+                    this.editUser(id);
+                };
+            });
+
+            document.querySelectorAll('.users-table tbody button.delete').forEach((e) => {
+                e.onclick = (el) => {
+                    var id = el.currentTarget.dataset.id;
+                    this.deleteUser(id);
+                };
+            });
+        }
     },
-    beforeUnmount() {
-        this.table.destroy();
+    beforeMount() {
+        this.columns = [
+            {
+                id: 'name',
+                name: 'Name'
+            },
+            {
+                id: 'email',
+                name: 'Email'
+            },
+            {
+                id: 'role',
+                name: 'Role'
+            },
+            {
+                id: null,
+                render: function(data) {
+                    return '<button name="Edit User" class="action-btn edit" data-id="'+ data.id +'"><i class="fa-solid fa-pen-to-square"></i></button>' +
+                        '<button name="Delete User" class="action-btn delete" data-id="'+ data.id +'"><i class="fa-solid fa-xmark"></i></button>';
+                },
+                name: 'Actions'
+            },
+        ];
     }
 }
 </script>
-
-<style scoped>
-
-</style>

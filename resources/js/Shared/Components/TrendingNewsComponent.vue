@@ -4,7 +4,7 @@
             <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg sm:rounded-lg">
                 <div class="p-6 bg-white dark:bg-slate-800 dark:border-none">
                     <h2 class="header-text text-gray-800 font-semibold dark:text-slate-400 leading-tight dark:border-b-2 dark:border-indigo-600">
-                        Trending News <button v-if="canAddTrend" @click="openAddTermModal()" id="add-trend-btn" type="button" class="btn btn-outline-primary"><i class="fa-solid fa-plus"></i></button>
+                        Trending News <button v-if="canAddTrend" @click="openAddTermModal()" id="add-trend-btn" class="action-btn"><i class="fa-solid fa-plus"></i></button>
                     </h2>
                 </div>
                 <div id="trends-container" class="container">
@@ -30,6 +30,7 @@
 
 <script>
 import Swal from 'sweetalert2';
+import route from "ziggy-js";
 
 export default {
     name: "TrendingNewsComponent",
@@ -44,31 +45,20 @@ export default {
     },
     methods: {
         pollData () {
-            this.polling = setInterval(() => {
-                this.getTrends();
+            this.polling = setInterval(async () => {
+                await this.getTrends();
             }, 60000)
         },
-        getTrends: function() {
-            var context = this;
-
-            $.ajax({
-                async: true,
-                method: "GET",
+        getTrends: async function() {
+            let res = await axios.get(route('get_trends'), {
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "/trend/get-trends",
-                data: {
-                    'count': 4
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
-            })
-            .done(function( data ) {
-                context.trends = data['trends'];
             });
+            console.log(res);
+            this.trends = res.data.trends;
         },
         openAddTermModal: function() {
-            const context = this;
-
             Swal.fire({
                 title: 'Add Trending News Article',
                 html:
@@ -82,18 +72,15 @@ export default {
                         url: document.getElementById('url-val').value.toString(),
                     };
 
-                    $.ajax({
-                        method: "POST",
+                    axios.post(route('add_trend'), inputData, {
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: "/trend/store",
-                        data: inputData
-                    }).done(function( data ) {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    }).then((data) => {
                         if(data.status)
                         {
                             Swal.fire('Saved!', '', 'success')
-                            context.getTrends();
+                            this.getTrends();
                         }
                         return false
                     })
@@ -108,15 +95,19 @@ export default {
             });
         }
     },
-    created: function() {
+    mounted: async function() {
+        await this.getTrends();
         this.pollData();
-    },
-    mounted: function() {
-        this.getTrends();
     }
 }
 </script>
 
 <style scoped>
-
+#add-trend-btn {
+    font-size: 14px;
+}
+::placeholder {
+    color: red;
+    opacity: 1; /* Firefox */
+}
 </style>

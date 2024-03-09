@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('terms', function (Blueprint $table) {
-            $table->id();
-            $table->string('term', 150);
-            $table->smallInteger('rating')->default(1);
-            $table->mediumText('description');
-            $table->timestamps();
+        Schema::table('accuracy_scores', function (Blueprint $table) {
+            $table->renameColumn('admin_flagged', 'is_correct');
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('terms');
+        Schema::table('accuracy_scores', function (Blueprint $table) {
+            $table->renameColumn('is_correct', 'admin_flagged');
+        });
     }
 };

@@ -6,22 +6,29 @@
         <ul class="sidebar-list relative">
             <li class="relative nav-item">
                 <Link class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-ellipsis
-                whitespace-nowrap transition duration-300 ease-in-out" :href="route('admin.dashboard')" :class="$page.url === '/admin/dashboard' ? 'active' : ''">
+                whitespace-nowrap transition duration-300 ease-in-out" :href="route('admin.dashboard')" :class="$page.url === route('admin.dashboard') ? 'active' : ''">
                     <span class="text-base"><i class="fa-solid fa-chart-area"></i> Dashboard</span>
                 </Link>
             </li>
             <li class="relative nav-item">
                 <Link class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700 text-ellipsis
                 whitespace-nowrap hover:text-gray-900 hover:bg-gray-100
-                transition duration-300 ease-in-out" :href="route('admin.users')" :class="$page.url === '/admin/users' ? 'active' : ''">
+                transition duration-300 ease-in-out" :href="route('admin.users.index')" :class="$page.url === route('admin.users.index') ? 'active' : ''">
                     <span class="text-base"><i class="fa-solid fa-users"></i> Users</span>
                 </Link>
             </li>
             <li class="relative nav-item">
                 <Link class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700
                 text-ellipsis whitespace-nowrap hover:text-gray-900 hover:bg-gray-100 transition duration-300
-                ease-in-out" :href="route('admin.accuracy-scores')" :class="$page.url === '/admin/accuracy-scores' ? 'active' : ''">
+                ease-in-out" :href="route('admin.accuracy-scores')" :class="$page.url === route('admin.accuracy-scores') ? 'active' : ''">
                     <span class="text-base"><i class="fa-solid fa-percent"></i> Accuracy Scores</span>
+                </Link>
+            </li>
+            <li class="relative nav-item">
+                <Link class="flex items-center text-sm py-4 px-6 h-12 overflow-hidden text-gray-700
+                text-ellipsis whitespace-nowrap hover:text-gray-900 hover:bg-gray-100 transition duration-300
+                ease-in-out" :href="route('dashboard')" :class="$page.url === route('admin.accuracy-scores') ? 'active' : ''">
+                    <span class="text-base"><i class="fa-regular fa-square-caret-left"></i> Back to User Dashboard</span>
                 </Link>
             </li>
             <li class="relative text-center">

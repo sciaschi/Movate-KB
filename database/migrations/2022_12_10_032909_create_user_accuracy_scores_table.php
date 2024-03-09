@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('terms', function (Blueprint $table) {
-            $table->id();
-            $table->string('term', 150);
-            $table->smallInteger('rating')->default(1);
-            $table->mediumText('description');
-            $table->timestamps();
+        Schema::create('user_accuracy_scores', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->mediumInteger('accuracy_grade');
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('terms');
+        Schema::dropIfExists('user_accuracy_scores');
     }
 };

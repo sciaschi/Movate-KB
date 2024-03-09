@@ -13,6 +13,7 @@ use App\Models\TermLink\TermLink;
 use App\Http\Controllers\Controller as Controller;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Inertia\Response;
 use MeiliSearch\Client;
 use Throwable;
 
@@ -34,7 +35,7 @@ class TermController extends Controller
      *  TermController Constructor
      */
     public function __construct() {
-        $this->client   = new Client($_SERVER['SERVER_NAME'] . ":7700");
+        $this->client   = new Client(env('MEILISEARCH_HOST', 'http://localhost:7700'), env('MIX_MEILI_MASTER_KEY', null));
         $this->terms    = Term::with('links')->orderBy('term')->get();
 
         $unJson = json_decode($this->terms->toJson());
@@ -53,7 +54,7 @@ class TermController extends Controller
 
     /**
      * Index Page
-     * @return \Inertia\Response
+     * @return Response
      */
     public function index() {
         return Inertia::render('SearchTerms/Index', [
@@ -71,7 +72,7 @@ class TermController extends Controller
 
     /**
      * Get All Terms
-     * @return \LaravelIdea\Helper\App\Models\TermLink\_IH_TermLink_C|TermLink[]
+     * @return TermLink[]
      */
     public function getTermLinksById($id) {
         return TermLink::where('term_id', '=', $id)->get();

@@ -17,7 +17,7 @@ class AssignRolesSeeder extends Seeder
     {
         $user = User::first();
 
-        $user->assignRole('Moderator');
+        $user->assignRole('Admin');
 //        $user->givePermissionTo('add-trend');
     }
 }

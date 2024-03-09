@@ -1,7 +1,6 @@
 // webpack.mix.js
-
-const mix               = require('laravel-mix');
 const tailwindcss       = require('tailwindcss'); /* Add this line at the top */
+const mix                        = require('laravel-mix');
 const LiveReloadPlugin  = require('webpack-livereload-plugin');
 const minifier          = require('minifier');
 const path              = require('path')
@@ -10,7 +9,8 @@ module.exports = {
     output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },
     resolve: {
         alias: {
-            '@': path.resolve('./resources/js')
+            '@': path.resolve('./resources/js'),
+            '@jsAssets': path.resolve(__dirname, './resources/js')
         },
         extensions: ['.js', '.vue', '.json'],
     },
@@ -26,6 +26,7 @@ mix.webpackConfig({
     resolve: {
         alias: {
             ziggy: path.resolve('vendor/tightenco/ziggy/dist/vue'),
+            '@jsAssets': path.resolve(__dirname, './resources/js'),
         },
     },
 });

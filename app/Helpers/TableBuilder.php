@@ -37,7 +37,7 @@ class TableBuilder
                         $classList = $column['classList'] ?? '';
                         $columnKeys[] = $column['id'];
 
-                        $table .=     '<th class="' . $classList . '" scope="col">'. $column['name'] . '</th>';
+                        $table .= '<th class="' . $classList . '" scope="col">'. $column['name'] . '</th>';
                     }
                 $table .=   '</tr>';
             $table .= '</thead>';

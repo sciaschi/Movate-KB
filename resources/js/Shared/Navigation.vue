@@ -1,5 +1,5 @@
 <template>
-    <nav class="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-500">
+    <nav class="bg-white dark:bg-slate-800 dark:border-slate-500">
         <!-- Primary Navigation Menu -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -19,14 +19,14 @@
                     font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-slate-400
                     dark:hover:text-gray-300 dark:hover:border-gray-300 focus:outline-none light:focus:text-gray-700
                     light:focus:border-gray-300 dark:focus:text-slate-300 dark:focus:border-gray-300
-                    transition duration-150 ease-in-out" :href="route('dashboard')" :class="$page.url === '/dashboard' ? 'active' : ''">
+                    transition duration-150 ease-in-out" :href="route('dashboard')" :class="$page.url === route('dashboard') ? 'active' : ''">
                             Dashboard
                         </Link>
                         <Link class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm
                     font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-slate-400
                     dark:hover:text-gray-300 dark:hover:border-gray-300 focus:outline-none light:focus:text-gray-700
                     light:focus:border-gray-300 dark:focus:text-slate-300 dark:focus:border-gray-300
-                    transition duration-150 ease-in-out" :href="route('terms')" :class="$page.url === '/search-terms' ? 'active' : ''">
+                    transition duration-150 ease-in-out" :href="route('terms')" :class="$page.url === route('terms') ? 'active' : ''">
                             Terms
                         </Link>
                         <Link class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm
@@ -53,6 +53,7 @@
                             <div class="toggle-circle"></div>
                         </div>
                     </label>
+                    <PageCounter></PageCounter>
                     <Dropdown width="w-48" class="float-right">
                         <template v-slot:trigger>
                             <button class="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700
@@ -111,7 +112,6 @@
                     <div class="font-medium text-base text-gray-800">{{ $page.props.auth.user ? $page.props.auth.user.name : "Guest" }}</div>
                     <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user ? $page.props.auth.user.email : "" }}</div>
                 </div>
-
                 <div class="mt-3 space-y-1">
                     <!-- Authentication -->
                     <form method="POST" action="{{ route('logout') }}">
@@ -128,7 +128,7 @@
 
 <script setup>
 import {ref} from "vue";
-
+import route from "ziggy-js";
 let open = ref(true);
 
 </script>
@@ -139,9 +139,11 @@ import DropdownLink from "./Widgets/dropdown-link";
 import { Link } from "@inertiajs/inertia-vue3";
 import { ref } from "vue";
 import ResponsiveNavLink from "./Widgets/responsive-nav-link";
+import PageCounter from "./Widgets/counter.vue";
 
 export default {
     components: {
+        PageCounter,
         ResponsiveNavLink,
         Dropdown,
         DropdownLink,

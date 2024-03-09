@@ -24,7 +24,7 @@ class SearchTermBase extends Component
     ];
 
     public function boot() {
-        $this->client       = new Client($_SERVER['SERVER_NAME'] . ":7700");
+        $this->client       = new Client(env('MEILISEARCH_HOST', 'http://localhost:7700'), env('MIX_MEILI_MASTER_KEY', 'I2s%ubKv43b3#'));
         $this->selectedTerm = new Term();
     }
 

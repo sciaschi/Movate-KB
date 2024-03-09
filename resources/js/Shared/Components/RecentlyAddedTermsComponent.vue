@@ -34,6 +34,8 @@
 
 <script>
 import * as bootstrap from 'bootstrap';
+import route from "ziggy-js";
+import moment from "moment";
 
 export default {
     name: "RecentlyAddedTermsComponent",
@@ -52,22 +54,18 @@ export default {
                 this.getTerms();
             }, 60000)
         },
-        getTerms: function() {
-            var context = this;
+        getTerms: async function() {
 
-            $.ajax({
-                async: true,
-                method: "GET",
+            let res = await axios.get(route('get-recently-added-terms'), {
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                url: "/term/get-recently-added-terms"
-            })
-            .done(function( data ) {
-                if(data.status) {
-                    context.terms = data.terms;
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
+            console.log(res);
+
+            if(res.status) {
+                this.terms = res.data.terms;
+            }
         }
     },
     beforeUnmount () {

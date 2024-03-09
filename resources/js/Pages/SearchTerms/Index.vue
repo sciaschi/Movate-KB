@@ -35,10 +35,9 @@
 <script>
 import {MeiliSearch} from "meilisearch";
 import TermDetails from "./TermDetails";
-import moment from 'moment';
 import TermEdit from "./TermEdit";
-import {usePage} from "@inertiajs/inertia-vue3";
-import Swal from 'sweetalert2';
+import route from "ziggy-js";
+import utils from "@jsAssets/utils";
 
 export default {
     name: "Index",
@@ -76,23 +75,17 @@ export default {
 
             this.setSelectedItemBg(el);
         },
-        getAllTerms: function () {
-            var context = this;
+        getAllTerms: async function () {
 
             console.log("Updating all terms");
-
-            $.ajax({
-                async: false,
-                method: "GET",
+            var res = await axios.get(route('get-all-terms'),{
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
-                url: "/term/get-all-terms"
-            })
-                .done((data) => {
-                    context.searchTerms = data;
-                    context.client.index('terms').addDocuments(context.searchTerms);
-                });
+            });
+
+            this.searchTerms = res.data;
+            this.client.index('terms').addDocuments(this.searchTerms);
         },
         searchTerm: function (text) {
             var context = this;
@@ -131,8 +124,10 @@ export default {
 
     },
     created: function() {
-        var host = location.hostname + ':7700';
-        this.client = new MeiliSearch({ host: host });
+        let api_url = process.env.MIX_MEILISEARCH_HOST;
+        console.log(api_url);
+        var host = process.env.MIX_MEILISEARCH_HOST == 'localhost:7700' ? process.env.MIX_MEILISEARCH_HOST : process.env.MEILISEARCH_HOST;
+        this.client = new MeiliSearch({ host: host, apiKey:'lobSyEyH1xzphfQP4iFvsGWdqP_TxkmLGAcDYm1UH_c' });
     },
     mounted: function() {
         this.getAllTerms();
