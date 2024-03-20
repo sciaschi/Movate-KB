@@ -1,12 +1,8 @@
 <template>
     <div id="editPanel" class="row p-3">
         <div class="col-6 mt-2">
-            <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white" :class="!adding ? 'rating-'+ term.rating : 'rating-1'">{{ !adding ? term.rating : '1' }}</span></label>
+            <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white term-rating" :class="!adding ? 'rating-'+ term.rating : 'rating-1'">{{ !adding ? term.rating : '1' }}</span></label>
             <input type="range" class="form-range" min="1" max="8" id="edit-rating" :value="!adding ? term.rating : '1'">
-        </div>
-        <div class="col-6 mt-2">
-            <span>Date</span>
-            <p id="edit-date" class="fs-6">{{ !adding ? formatSelectedTermDate(term.created_at) : formatSelectedTermDate(Date()) }}</p>
         </div>
         <div class="col-12  mt-2">
             <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
@@ -146,8 +142,6 @@ export default {
         },
         addLink: function(event) {
             var editLinkInput = document.getElementById('edit-web-address-val');
-
-            console.log(editLinkInput.value)
 
             this.links.push({link_url: editLinkInput.value});
 

@@ -64,7 +64,6 @@ export default {
                 data: 'accuracy_score',
                 name: 'Accuracy Score',
                 render: function (data) {
-                    console.log('%', data)
                     return data.accuracy_score + '% ' + ' (Last Update: ' + data.last_updated + ')';
                 }
             },

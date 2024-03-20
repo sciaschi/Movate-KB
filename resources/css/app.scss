@@ -90,6 +90,7 @@ html.admin {
 }
 
 header {
+    padding-top: 25px;
     height:80px;
     line-height: 80px;
 }
@@ -311,6 +312,13 @@ header {
     margin-right: 10px;
 }
 
+.term-rating {
+    padding: 5px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-left: 20px;
+}
+
 [type='text'], [type='email'], [type='url'], [type='password'], [type='number'], [type='date'], [type='datetime-local'],
 [type='month'], [type='search'], [type='tel'], [type='time'], [type='week'], [multiple], textarea, select {
     background-color: #fff;
@@ -366,4 +374,8 @@ table.rounded {
 .sidebar-header {
     height:20%;
     border-bottom: 1px #312e81 solid;
+}
+
+.max-height {
+    height:100%!important;
 }

@@ -23,7 +23,6 @@ let jsTableBuilder = {
         if(typeof tableData == 'string')
         {
             this.data = await this.getData(tableData);
-            console.log('response', this.data);
         }
         else
         {
@@ -57,8 +56,6 @@ let jsTableBuilder = {
         table += '</table>';
 
         this.html = table;
-
-        console.log(this.html);
 
         return this.html;
     },

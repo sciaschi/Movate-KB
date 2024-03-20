@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers\Term;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -35,7 +32,7 @@ class TermController extends Controller
      *  TermController Constructor
      */
     public function __construct() {
-        $this->client   = new Client(env('MEILISEARCH_HOST', 'http://localhost:7700'), env('MIX_MEILI_MASTER_KEY', null));
+        $this->client   = new Client(env('MEILISEARCH_HOST', 'http://localhost:7700'), env('MEILI_MASTER_KEY', null));
         $this->terms    = Term::with('links')->orderBy('term')->get();
 
         $unJson = json_decode($this->terms->toJson());
@@ -234,6 +231,30 @@ class TermController extends Controller
         return response()->json([
             'status' => true,
             'terms' => $terms
+        ]);
+    }
+
+    /**
+     * Get Recently Added Trends Sorted by created_at desc
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function searchTerm(Request $request)
+    {
+        $data   = $request->all();
+
+        $this->client->index('terms')->updateSearchableAttributes([
+            'term',
+        ]);
+
+        $res = $this->client->index('terms')->search($data['searchTerm'], [
+            'limit' => 20000
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'result' => $res->toArray()
         ]);
     }
 

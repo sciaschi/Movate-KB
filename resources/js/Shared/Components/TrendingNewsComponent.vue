@@ -1,46 +1,73 @@
 <template>
-    <div class="py-12 col-6">
-        <div class="max-w-7 mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-6 bg-white dark:bg-slate-800 dark:border-none">
-                    <h2 class="header-text text-gray-800 font-semibold dark:text-slate-400 leading-tight dark:border-b-2 dark:border-indigo-600">
-                        Trending News <button v-if="canAddTrend" @click="openAddTermModal()" id="add-trend-btn" class="action-btn"><i class="fa-solid fa-plus"></i></button>
-                    </h2>
-                </div>
-                <div id="trends-container" class="container">
-                    <div id="trends-grid" class="row">
-                        <div class="col-md-6 col-sm-12 col-lg-4 col-xl-4 mb-3" v-for="trend in trends">
-                            <a :href="trend.url" target="_blank" class="">
-                                <div class="card dark:bg-slate-700 dark:text-slate-400" style="width: 12rem; margin-top:10px;">
-                                    <img :src="trend.image" class="card-img-top trend-card" alt="Trend Image">
-                                    <div class="card-body trend-card-body">
-                                        <p class="card-text trend-card-text">
-                                            {{trend.title}}
-                                        </p>
-                                    </div>
-                                </div>
-                            </a>
+    <component-layout header="Trending News">
+        <template #header-actions>
+            <button v-if="canAddTrend" @click="openAddTermModal()" id="add-trend-btn" class="action-btn"><i class="fa-solid fa-plus"></i></button>
+        </template>
+        <grid-layout
+            v-if="trends"
+            :layout.sync="layout"
+            :col-num="3"
+            :row-height="120"
+            :is-draggable="false"
+            :is-resizable="false"
+            :vertical-compact="true"
+            :preventCollision="true"
+            :auto-size="true"
+            :use-css-transforms="false"
+            :margin="[5,5]">
+            <grid-item v-for="(item, index) in layout"
+                       :static="true"
+                       :ref="item.i"
+                       :x="item.x"
+                       :y="item.y"
+                       :w="item.w"
+                       :h="item.h"
+                       :i="item.i"
+                        style="text-align: center">
+                <a :href="trends[index].url" target="_blank">
+                    <div class="card max-height dark:bg-slate-700 dark:text-slate-400">
+                        <img :src="trends[index].image" class="card-img-top trend-card" alt="Trend Image">
+                        <div class="card-body trend-card-body">
+                            <p class="card-text trend-card-text">
+                                {{trends[index].title}}
+                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                </a>
+            </grid-item>
+        </grid-layout>
+    </component-layout>
+
 </template>
 
 <script>
 import Swal from 'sweetalert2';
 import route from "ziggy-js";
+import ComponentLayout from "@jsAssets/Shared/Widgets/Shared/dashboard-component-layout.vue";
+import VueGridLayout, {GridLayout, GridItem} from 'vue-grid-layout-v3'
 
 export default {
     name: "TrendingNewsComponent",
+    components: {
+        ComponentLayout,
+        GridLayout,
+        GridItem
+    },
     props: {
         user: Object,
         canAddTrend: Boolean
     },
     data() {
        return {
-           trends: null
+           trends: null,
+           layout: [
+               {"x":0,"y":0,"w":1,"h":2,"i":"trend-1"},
+               {"x":1,"y":0,"w":1,"h":2,"i":"trend-2"},
+               {"x":2,"y":0,"w":1,"h":2,"i":"trend-3"},
+               {"x":0,"y":1,"w":1,"h":2,"i":"trend-4"},
+               {"x":1,"y":1,"w":1,"h":2,"i":"trend-5"},
+               {"x":2,"y":1,"w":1,"h":2,"i":"trend-6"},
+           ]
        }
     },
     methods: {
@@ -55,7 +82,7 @@ export default {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
-            console.log(res);
+
             this.trends = res.data.trends;
         },
         openAddTermModal: function() {
@@ -98,6 +125,9 @@ export default {
     mounted: async function() {
         await this.getTrends();
         this.pollData();
+    },
+    unmounted: function () {
+        this.polling = null;
     }
 }
 </script>

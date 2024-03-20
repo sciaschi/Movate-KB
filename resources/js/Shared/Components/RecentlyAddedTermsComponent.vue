@@ -1,46 +1,24 @@
 <template>
-    <div class="py-12 col-6">
-        <div class="max-w-7 mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-slate-800 overflow-hidden shadow-lg sm:rounded-lg">
-                <div class="p-6 bg-white dark:bg-slate-800 dark:border-none">
-                    <h2 class="header-text text-gray-800 font-semibold dark:text-slate-400 leading-tight dark:border-b-2 dark:border-indigo-600">
-                        Recently Added Terms
-                    </h2>
-                </div>
-                <div id="recent-terms-container" class="container pt-3">
-                    <div id="rt-grid" class="row align-items-stretch" v-if="!isLoading">
-                        <div class="col-md-6 col-sm-12 col-lg-4 col-xl-4 h-100 mb-3 align-middle" v-for="term in terms">
-                            <div class="card ra-term dark:bg-slate-700 dark:text-slate-400" data-bs-toggle="popover" data-bs-placement="top"
-                                 :data-bs-title="term.term"
-                                 :data-bs-content="term.description"
-                                 :data-id="term.id">
-                                <div class="card-body">
-                                    <div style="padding-bottom: 5px;">
-                                        <span>{{ term.term }}</span>
-                                        <span :class="'rating-'+term.rating" class="ra-term-rating text-white dark:dark:text-slate-600 float-end">{{ term.rating }}</span>
-                                    </div>
-                                    <div class="ra-term-date">
-                                        <span>{{ moment().utc(term.created_at).fromNow() }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <component-layout header="Recently Added Terms">
+        <div id="recent-terms-container" class="p-3">
+            <fx-table @vue:updated="tableMounted" :columns="columns" :data="terms"></fx-table>
         </div>
-    </div>
+    </component-layout>
 </template>
 
 <script>
 import * as bootstrap from 'bootstrap';
 import route from "ziggy-js";
 import moment from "moment";
+import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
+import ComponentLayout from "@jsAssets/Shared/Widgets/Shared/dashboard-component-layout.vue";
 
 export default {
     name: "RecentlyAddedTermsComponent",
+    components: {ComponentLayout, FxTable},
     data () {
         return {
+            columns: [],
             terms: null,
             isLoading: false
         }
@@ -49,24 +27,45 @@ export default {
         moment: function () {
             return moment;
         },
-        pollData () {
-            this.polling = setInterval(() => {
-                this.getTerms();
+        pollData() {
+            this.polling = setInterval(async () => {
+                await this.getTerms();
             }, 60000)
         },
         getTerms: async function() {
-
             let res = await axios.get(route('get-recently-added-terms'), {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
-            console.log(res);
 
             if(res.status) {
                 this.terms = res.data.terms;
             }
-        }
+        },
+        tableMounted: function() {}
+    },
+    beforeMount() {
+        this.columns = [
+            {
+                id: 'term',
+                name: 'Term'
+            },
+            {
+                id: 'rating',
+                render: function (data) {
+                      return "<span class='ra-term-rating rating-"+ data.rating +"'>" + data.rating + "</span>";
+                },
+                name: 'Rating'
+            },
+            {
+                id: null,
+                render: function(data) {
+                    // return data.description;
+                },
+                name: 'Actions'
+            },
+        ];
     },
     beforeUnmount () {
         clearInterval(this.polling)
@@ -74,7 +73,9 @@ export default {
     },
     created () {
         this.pollData();
-        this.getTerms();
+    },
+    async mounted() {
+        await this.getTerms();
     },
     updated() {
         const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]'),

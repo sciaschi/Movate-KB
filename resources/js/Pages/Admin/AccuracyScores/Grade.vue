@@ -4,7 +4,7 @@
     </header>
     <label for="formFile" class="csv-file-input">
         <span class="sr-only">Choose CSV File</span>
-        <input type="file" id="formFile" accept="text/csv" @change="parseCSV">
+        <input type="file" id="formFile" accept="text/csv, text/xlsx" @change="parseCSV">
     </label>
     <div class="uploaded-names row">
         <div class="col-4" v-for="(dat, index) in data">
@@ -33,11 +33,10 @@
 
 <script>
 import * as Papa from 'papaparse';
+import route from "ziggy-js";
 
 export default {
     name: "Grade",
-    components: {
-    },
     props: {
         gradingUser: Object
     },
@@ -48,17 +47,16 @@ export default {
     },
     methods: {
         parseCSV: function (e) {
-            var context = this;
-
             Papa.parse(e.target.files[0],{
-                complete: function(results, file) {
-                    context.data = results.data.map(function (x) {
+                complete: (res) => {
+                    console.log('res.data', res.data);
+                    this.data = res.data.map(function (x) {
                         return {
                             'name': x[2],
                             'flagged': x[1] == 'Moderator Approved Unselected',
                         }
                     });
-                    context.data.splice(context.data.length - 1, 1)
+                    this.data.splice(this.data.length - 2, 1)
                 }
             });
         },

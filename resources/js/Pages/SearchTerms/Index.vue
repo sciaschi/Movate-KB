@@ -1,9 +1,9 @@
 <template>
-    <div class="overflow-hidden shadow-sm sm:rounded-lg w-100 d-inline-block" style="min-height: 100%;">
-        <div class="p-6 h-100 w-100 d-inline-block">
+    <div class="overflow-hidden shadow-sm sm:rounded-lg w-100 d-inline-block">
+        <div class="p-6 h-100 w-100 d-inline-block" style="min-height: 85vh;">
             <div class="container row">
-                <div id="username_sidebar" class="col-xs-12 col-sm-12 col-md-4 bg-light shadow-sm sm:rounded-lg dark:bg-slate-700 dark:text-slate-400">
-                    <div class="input-group mb-3">
+                <div id="username_sidebar" class="col-xs-12 col-sm-12 col-md-4 bg-light shadow-sm sm:rounded-lg dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto">
+                    <div class="input-group mb-3 mt-3">
                         <input @keyup="searchTrigger.invoke($event.target.value)" @keyup.delete="searchTrigger.invoke($event.target.value)"
                                id="search-input" type="text" class="form-control search-input" placeholder="Search for term..."
                                aria-describedby="search-input-button">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-8">
-                    <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400" style="min-height: 100%;">
+                    <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto; padding:10px;">
                         <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm"  v-if="adding || selectedTerm"
                                     :adding="adding" :is="editing || adding ? 'term-edit' : 'term-details'"
                                     :term="selectedTerm">
@@ -51,7 +51,6 @@ export default {
             adding: false,
             searchTerms: [],
             selectedTerm: null,
-            client: null,
             searchTrigger: null
         }
     },
@@ -76,8 +75,6 @@ export default {
             this.setSelectedItemBg(el);
         },
         getAllTerms: async function () {
-
-            console.log("Updating all terms");
             var res = await axios.get(route('get-all-terms'),{
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -85,26 +82,17 @@ export default {
             });
 
             this.searchTerms = res.data;
-            this.client.index('terms').addDocuments(this.searchTerms);
         },
-        searchTerm: function (text) {
-            var context = this;
-
+        searchTerm: async function (text) {
             if (!text.length) {
                 return this.getAllTerms();
             }
 
-            this.client.index('terms').updateSettings({
-                searchableAttributes: [
-                    'term'
-                ]
-            });
+            let res = await axios.post(route('search-term'), {
+                searchTerm: text
+            })
 
-            return this.client.index('terms').search(text, {
-                limit: 50
-            }).then(function (data) {
-                context.searchTerms = data.hits;
-            });
+            this.searchTerms = res.data.result.hits;
         },
         updateEditTerm: function (term) {
             var termIndex = this.searchTerms.findIndex(x => x.id === term.id);
@@ -124,13 +112,10 @@ export default {
 
     },
     created: function() {
-        let api_url = process.env.MIX_MEILISEARCH_HOST;
-        console.log(api_url);
-        var host = process.env.MIX_MEILISEARCH_HOST == 'localhost:7700' ? process.env.MIX_MEILISEARCH_HOST : process.env.MEILISEARCH_HOST;
-        this.client = new MeiliSearch({ host: host, apiKey:'lobSyEyH1xzphfQP4iFvsGWdqP_TxkmLGAcDYm1UH_c' });
+
     },
-    mounted: function() {
-        this.getAllTerms();
+    mounted: async function() {
+        await this.getAllTerms();
         this.searchTrigger = new utils.rollingTrigger(this.searchTerm, 500);
     }
 }

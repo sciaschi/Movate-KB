@@ -10,7 +10,7 @@
     <tbody>
         <tr v-for="row in data">
             <td v-for="column in columns">
-                <span v-if="column.id == null || column.render" v-html="column.render(row)"></span>
+                <span v-if="column.render" :class="column.classList" v-html="column.render(row)"></span>
                 <span v-else>{{row[column.id]}}</span>
             </td>
         </tr>
@@ -24,25 +24,34 @@ export default {
     props: {
         ajaxRoute: '',
         columns: Array,
+        data: Array
     },
     data() {
         return {
-            table: null,
-            data: []
+            table: null
         }
     },
     methods: {
-        getData: async function(url, callback) {
-            let res = await axios.get(url);
-            this.data = res.data.data;
+        getData: async function(ajax, callback) {
+            console.log("ajax", ajax);
 
-            if(typeof callback == "function") {
+            if(typeof ajax === "string") {
+                let res = await axios.get(ajax);
+                this.data = res.data.data;
+            }
+
+            if(typeof callback === "function") {
                 callback();
             }
+
+            console.log("data", this.data);
         }
     },
-    created() {
-        this.getData(this.ajaxRoute);
+    async mounted() {
+        if(!this.data)
+        {
+            await this.getData(this.ajax);
+        }
     }
 }
 </script>

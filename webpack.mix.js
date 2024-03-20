@@ -9,10 +9,9 @@ module.exports = {
     output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },
     resolve: {
         alias: {
-            '@': path.resolve('./resources/js'),
             '@jsAssets': path.resolve(__dirname, './resources/js')
         },
-        extensions: ['.js', '.vue', '.json'],
+        extensions: [".*",".wasm",".mjs",".js",".jsx",".json",".vue"],
     },
     plugins: [
         new LiveReloadPlugin()

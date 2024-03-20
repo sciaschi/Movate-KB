@@ -3,7 +3,7 @@
         <div class="col-8">
             <span id="detailsTerm" class="fs-1 fw-bold">
                 <span>{{ term.term }}</span>
-                <span id="detailRatingSpan" class="fs-4 text-white" :class="'rating-' + term.rating">
+                <span id="detailRatingSpan" class="fs-4 term-rating ml-5 text-white" :class="'rating-' + term.rating">
                     {{ term.rating }}
                 </span>
             </span>
