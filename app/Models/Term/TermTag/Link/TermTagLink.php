@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Models\Term\TermTag\Link;
+
+use App\Models\Term\TermTag\Link\Traits\Relationship;
+use App\Models\Term\TermTag\Link\Traits\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
+
+class TermTagLink extends Model
+{
+    use HasFactory, Attribute, Relationship, Searchable;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'term_tags_link';
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'term_id',
+        'tag_id'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [];
+}
