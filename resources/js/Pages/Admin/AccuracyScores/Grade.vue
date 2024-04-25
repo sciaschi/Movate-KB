@@ -1,11 +1,17 @@
 <template>
     <header>
-        <span class="header-text">Grading {{$page.props.gradingUser.name}}'s Accuracy</span>
+        <span class="header-text">Accuracy Grading</span>
     </header>
-    <label for="formFile" class="csv-file-input">
-        <span class="sr-only">Choose CSV File</span>
-        <input type="file" id="formFile" accept="text/csv, text/xlsx" @change="parseCSV">
-    </label>
+    <div id="actions" class="actions">
+        <select v-model="selected">
+            <option disabled value="">Please select moderator</option>
+            <option v-for="user in users" :value="user.id">{{user.name}}</option>
+        </select>
+        <label class="csv-file-input  float-right">
+            <span class="sr-only">Choose CSV File</span>
+            <input type="file" id="formFile" accept="text/csv, text/xlsx" @change="parseCSV">
+        </label>
+    </div>
     <div class="uploaded-names row">
         <div class="col-4" v-for="(dat, index) in data">
             <div class="card mb-2">
@@ -26,23 +32,29 @@
         </div>
         <div class="grade-details float-right">
             <span class="accuracy-percentage"></span>
-            <button type="button"  class="btn btn-primary" @click="gradeAccuracy">Grade</button>
+            <create-button @click="gradeAccuracy">Grade</create-button>
         </div>
     </div>
 </template>
 
 <script>
 import * as Papa from 'papaparse';
+import createButton from "@jsAssets/Shared/Widgets/create-button.vue";
 import route from "ziggy-js";
 
 export default {
     name: "Grade",
+    components: {
+        createButton
+    },
     props: {
         gradingUser: Object
     },
     data () {
         return {
-            data: null
+            data: null,
+            users: null,
+            selected: null
         }
     },
     methods: {
@@ -59,6 +71,10 @@ export default {
                     this.data.splice(this.data.length - 2, 1)
                 }
             });
+        },
+        getMods: async function(e) {
+            let res = await axios.get(route('admin.accuracy-scores.get-mods'));
+            this.users = res.data.data;
         },
         gradeAccuracy: function(e) {
             var correct         = 0,
@@ -80,15 +96,20 @@ export default {
             var accuracy = (correct / totalCount) * 100;
 
             axios.post(route('admin.create-accuracy-score'), {
-                'user_id': this.$props.gradingUser.id,
+                'user_id': this.$props.gradingUser == null ? this.selected : this.$props.gradingUser.id,
                 'accuracy': accuracy,
                 'data': postData
             })
         }
+    },
+    mounted() {
+        this.getMods();
     }
 }
 </script>
 
 <style scoped>
-
+#actions {
+    //margin: 10px;
+}
 </style>

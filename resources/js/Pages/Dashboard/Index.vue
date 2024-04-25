@@ -22,7 +22,7 @@
                        :h="item.h"
                        :i="item.i"
                        @move="moveEvent(item.i)">
-                <component :is="item.c"></component>
+                <component :is="item.c" v-bind="item.props"></component>
             </grid-item>
         </grid-layout>
     </div>
@@ -30,10 +30,11 @@
 <script>
 import { Head } from '@inertiajs/inertia-vue3'
 
-import TrendingNewsComponent from "../../Shared/Components/TrendingNewsComponent";
-import RecentlyAddedTermsComponent from "../../Shared/Components/RecentlyAddedTermsComponent";
-import ModsPerHour from "../../Shared/Widgets/User/mods-per-hour.vue";
+import TrendingNewsComponent from "@jsAssets/Shared/Components/TrendingNewsComponent";
+import RecentlyAddedTermsComponent from "@jsAssets/Shared/Components/RecentlyAddedTermsComponent";
+import ModsPerHour from "@jsAssets/Shared/Widgets/User/mods-per-hour.vue";
 import VueGridLayout, {GridLayout, GridItem} from 'vue-grid-layout-v3'
+import ModsPerDay from "@jsAssets/Shared/Widgets/User/mods-per-day.vue";
 
 export default {
     components: {
@@ -43,23 +44,21 @@ export default {
         GridLayout,
         TrendingNewsComponent,
         RecentlyAddedTermsComponent,
-        ModsPerHour
+        ModsPerHour,
+        ModsPerDay
     },
     props: {
         canAddTrend: Boolean
     },
     data () {
         return {
-            resizeSensor: null,
-            clientHeight: null,
-            resize: null,
-            draggable: true,
+            draggable: false,
             layout: [
                 {"x":0,"y":0,"w":1,"h":1,"i":"mph", "c": 'ModsPerHour'},
-                {"x":1,"y":0,"w":1,"h":1,"i":"1", "c": 'ModsPerHour'},
-                {"x":2,"y":0,"w":1,"h":1,"i":"2", "c": 'ModsPerHour'},
-                {"x":3,"y":0,"w":1,"h":1,"i":"3", "c": 'ModsPerHour'},
-                {"x":0,"y":1,"w":2,"h":3.2,"i":"tnc", "c": 'TrendingNewsComponent'}, // component name used but you could also use a reference to the component
+                {"x":1,"y":0,"w":1,"h":1,"i":"mpd", "c": 'ModsPerDay'},
+                // {"x":2,"y":0,"w":1,"h":1,"i":"2", "c": 'ModsPerHour'},
+                // {"x":3,"y":0,"w":1,"h":1,"i":"3", "c": 'ModsPerHour'},
+                {"x":0,"y":1,"w":2,"h":3.2,"i":"tnc", "c": 'TrendingNewsComponent', "props": {canAddTrend: this.canAddTrend}}, // component name used but you could also use a reference to the component
                 {"x":2,"y":1,"w":2,"h":4,"i":"ratc", "c": 'RecentlyAddedTermsComponent'}
             ]
         }

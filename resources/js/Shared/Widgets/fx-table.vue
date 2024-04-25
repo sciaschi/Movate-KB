@@ -1,4 +1,7 @@
 <template>
+<div id="action-bar" class="float-right">
+    <slot name="actions"></slot>
+</div>
 <table class="table fx-table">
     <thead>
         <tr>
@@ -57,5 +60,7 @@ export default {
 </script>
 
 <style scoped>
-
+#action-bar {
+    margin: 10px;
+}
 </style>

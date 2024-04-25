@@ -4,7 +4,11 @@
     </header>
 
     <div class="container table-container">
-        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users-with-accuracies')" :columns="columns"></fx-table>
+        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users-with-accuracies')" :columns="columns">
+            <template v-slot:actions>
+                <create-button @click="addNewAccuracyData()"><i class="fa fa-plus pr-1"></i> Add New</create-button>
+            </template>
+        </fx-table>
     </div>
 
 </template>
@@ -14,11 +18,13 @@ import AdminLayout from "../../../Shared/Admin/AdminLayout";
 import {Inertia} from "@inertiajs/inertia";
 import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
 import route from "ziggy-js";
+import CreateButton from "@jsAssets/Shared/Widgets/create-button.vue";
 
 export default {
     name: "Index",
     layout: AdminLayout,
     components: {
+        CreateButton,
         FxTable
     },
     data() {
@@ -31,8 +37,8 @@ export default {
         viewHistoricalData: function(id) {
             Inertia.visit(route('admin.accuracy-history', {id: id}));
         },
-        addNewAccuracyData: function(id) {
-            Inertia.visit(route('admin.grade-accuracy', {id: id}));
+        addNewAccuracyData: function() {
+            Inertia.visit(route('admin.grade-accuracy-no-id'));
         },
         tableMounted: function () {
             document.querySelectorAll('.users-table tbody button.vhd').forEach((e) => {

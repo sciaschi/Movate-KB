@@ -8,22 +8,24 @@ use App\Models\Term\Term;
 use App\Models\User\User;
 use App\Models\UserAccuracyScore\UserAccuracyScore;
 use Carbon\Carbon;
+use Deligoez\LaravelModelHashId\Exceptions\UnknownHashIdConfigParameterException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use Validator;
 
 class AdminAccuracyScoresController extends Controller
 {
     /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function index() {
         return Inertia::render('Admin/AccuracyScores/Index');
     }
 
     /**
-     * @return \Inertia\Response
+     * @return Response
      */
     public function historical($id) {
         return Inertia::render('Admin/AccuracyScores/Historical', [
@@ -33,6 +35,7 @@ class AdminAccuracyScoresController extends Controller
 
     /**
      * @return JsonResponse
+     * @throws UnknownHashIdConfigParameterException
      */
     public function getHistoricalData(Request $request) {
         $data = $request->all();
@@ -66,13 +69,13 @@ class AdminAccuracyScoresController extends Controller
     }
 
     /**
-     * @param \Request $request
-     * @param $id
-     * @return \Inertia\Response
+     * @param Request $request
+     * @param null $id
+     * @return Response
      */
-    public function grade(Request $request, $id) {
+    public function grade(Request $request, $id = null) {
         return Inertia::render('Admin/AccuracyScores/Grade', [
-            'gradingUser' => User::whereHashId($id)->get(['id', 'name'])
+            'gradingUser' => $id ?? User::whereHashId($id)->get(['id', 'name'])
         ]);
     }
 
@@ -83,7 +86,11 @@ class AdminAccuracyScoresController extends Controller
     public function createAccuracyScore(Request $request) {
         $data = $request->all();
 
-        $addData = collect($data['data'])->map(function($el) use ($data) {
+        $addData = collect(array_filter($data['data']))->map(function($el) use ($data) {
+            if($el['username'] == null) {
+
+            }
+
             return [
                 'user_id'     => $data['user_id'],
                 'admin_id'    => auth()->user()->id,
@@ -137,6 +144,21 @@ class AdminAccuracyScoresController extends Controller
         ]);
     }
 
+    /**
+     * @return JsonResponse
+     */
+    public function getAllUsersWithRole() {
+
+        return response()->json([
+            'status' => true,
+            'data'   => User::role('Moderator')->get(['id', 'name'])
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function getAverageAccuracyByDates(Request $request) {
         $data         = $request->all();
         $dates        = $data['dates'];

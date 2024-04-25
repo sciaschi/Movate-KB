@@ -1,7 +1,7 @@
 <template>
-    <component-layout header="Mods Per Hour">
-        <div id="mods-per-hour">
-            <span id="num-per-hr" class="per-none">0</span>
+    <component-layout header="Mods Per Day">
+        <div id="mods-per-day">
+            <span id="num-per-day" class="per-none">0</span>
         </div>
     </component-layout>
 </template>
@@ -13,7 +13,7 @@ import { useCookies } from "vue3-cookies"
 import moment from "moment";
 
 export default {
-    name: "mods-per-hour",
+    name: "mods-per-day",
     components: {
         ComponentLayout
     },
@@ -43,10 +43,10 @@ export default {
 </script>
 
 <style scoped>
-    #mods-per-hour {
+    #mods-per-day {
         text-align: center;
     }
-    #num-per-hr {
+    #num-per-day {
         font-size: 50px;
         font-weight:bold;
     }

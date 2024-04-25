@@ -15,10 +15,10 @@ export default {
 <style scoped>
 button {
     height: 40px;
-    background-color:#4338ca !important;
+    background-color:#15803d !important;
 }
 button:hover {
     height: 40px;
-    background-color: #4d43c7 !important;
+    background-color: #317c48 !important;
 }
 </style>

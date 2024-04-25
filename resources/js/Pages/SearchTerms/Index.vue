@@ -7,9 +7,9 @@
                         <input @keyup="searchTrigger.invoke($event.target.value)" @keyup.delete="searchTrigger.invoke($event.target.value)"
                                id="search-input" type="text" class="form-control search-input" placeholder="Search for term..."
                                aria-describedby="search-input-button">
-                        <button @click="this.adding = true" class="btn btn-outline-light bg-primary" type="button" id="search-input-button">
+                        <primary-button @click="this.adding = true" class="btn btn-outline-light bg-primary" type="button" id="search-input-button">
                             <i class="fa-solid fa-plus"></i>
-                        </button>
+                        </primary-button>
                     </div>
                     <div id="search_results_div">
                         <ul id="search_results" class="list-group list-group-flush" role="tablist">
@@ -38,10 +38,12 @@ import TermDetails from "./TermDetails";
 import TermEdit from "./TermEdit";
 import route from "ziggy-js";
 import utils from "@jsAssets/utils";
+import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
 
 export default {
     name: "Index",
     components: {
+        PrimaryButton,
         TermEdit,
         TermDetails
     },
@@ -122,5 +124,12 @@ export default {
 </script>
 
 <style scoped>
-
+    #term-details {
+        overflow-x: hidden;
+    }
+    #search-input-button {
+        height:unset;
+        border-top-left-radius: 0!important;
+        border-bottom-left-radius: 0!important;
+    }
 </style>

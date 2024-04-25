@@ -1,11 +1,11 @@
 <template>
     <div id="editPanel" class="row p-3">
+        <div class="col-6  mt-2">
+            <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
+        </div>
         <div class="col-6 mt-2">
             <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white term-rating" :class="!adding ? 'rating-'+ term.rating : 'rating-1'">{{ !adding ? term.rating : '1' }}</span></label>
             <input type="range" class="form-range" min="1" max="8" id="edit-rating" :value="!adding ? term.rating : '1'">
-        </div>
-        <div class="col-12  mt-2">
-            <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
         </div>
         <div class="col-12  mt-2">
             <editor api-key="b28l0twrnfpoia2kkfocy20i6yvxkem4m1nptacdtkz0aslk" :init="{
@@ -32,8 +32,10 @@
         </div>
         <div class="col-6 mt-2 float-right">
             <div class="input-group">
-                <input type="text" id="edit-web-address-val" class="form-control" placeholder="Enter Web address..." aria-label="Enter Web address..." aria-describedby="edit-add-web-address-btn">
-                <button @click="addLink" class="btn btn-outline-secondary" type="button" id="edit-add-web-address-btn"><i class="fa-solid fa-plus"></i></button>
+                <input type="text" id="edit-web-address-val" class="form-control" placeholder="Enter Link Url..." aria-label="Enter Link Url..." aria-describedby="edit-add-web-address-btn">
+                <primary-button @click="addLink" class="btn-outline-light bg-primary" type="button" id="edit-add-web-address-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </primary-button>
             </div>
         </div>
         <div class="col-12 mt-2">
@@ -55,7 +57,7 @@
                                 {{ link.link_url }}
                             </td>
                             <td>
-                                <button class="btn btn-primary" @click="removeLink(index)"><i class="fa-solid fa-xmark"></i></button>
+                                <primary-button class="btn-primary" @click="removeLink(index)"><i class="fa-solid fa-xmark"></i></primary-button>
                             </td>
                         </tr>
                     </tbody>
@@ -73,7 +75,8 @@
 <script>
 import moment from "moment";
 import Editor from '@tinymce/tinymce-vue';
-
+import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
+import utils from "@jsAssets/utils"
 export default {
     name: "TermEdit",
     props: {
@@ -81,6 +84,7 @@ export default {
         adding: Boolean
     },
     components: {
+        PrimaryButton,
         'moment': moment,
         'editor': Editor
     },
@@ -165,5 +169,9 @@ export default {
 </script>
 
 <style scoped>
-
+#edit-add-web-address-btn {
+    height:unset;
+    border-top-left-radius: 0!important;
+    border-bottom-left-radius: 0!important;
+}
 </style>
