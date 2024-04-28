@@ -93,7 +93,7 @@ class AdminAccuracyScoresController extends Controller
 
             return [
                 'user_id'     => $data['user_id'],
-                'admin_id'    => auth()->user()->id,
+                'admin_id'    => Auth::user()->id,
                 'username'    => $el['username'],
                 'mod_flagged' => $el['mod_flagged'],
                 'is_correct'  => $el['is_correct'],

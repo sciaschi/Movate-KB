@@ -1,13 +1,13 @@
 <template>
     <div id="editPanel" class="row p-3">
-        <div class="col-6  mt-2">
+        <div class="col-6 mt-2">
             <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
         </div>
         <div class="col-6 mt-2">
-            <label for="edit-rating" class="form-label">Rating <span id="edit-rangeval" class="text-white term-rating" :class="!adding ? 'rating-'+ term.rating : 'rating-1'">{{ !adding ? term.rating : '1' }}</span></label>
-            <input type="range" class="form-range" min="1" max="8" id="edit-rating" :value="!adding ? term.rating : '1'">
+            <label for="edit-class" class="form-label">Class <span id="edit-rangeval" class="fs-6 term-rating ml-5 text-white" :class="!adding ? 'class-'+ term.rating : 'class-1'">{{ !adding ? utils().convertRating(term.rating) : '1' }}</span></label>
+            <input type="range" class="form-range" min="1" max="4" id="edit-class" :value="!adding ? term.rating : '1'">
         </div>
-        <div class="col-12  mt-2">
+        <div class="col-12 mt-2">
             <editor api-key="b28l0twrnfpoia2kkfocy20i6yvxkem4m1nptacdtkz0aslk" :init="{
                 height: 500,
                 plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks ' +
@@ -77,6 +77,7 @@ import moment from "moment";
 import Editor from '@tinymce/tinymce-vue';
 import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
 import utils from "@jsAssets/utils"
+
 export default {
     name: "TermEdit",
     props: {
@@ -95,8 +96,8 @@ export default {
     },
     emits: ['updateEditTerm', 'addNewTerm'],
     methods: {
-        formatSelectedTermDate: function (date) {
-            return moment(date).format("MMMM Do YYYY");
+        utils() {
+            return utils
         },
         useDarkMode: function() {
             return window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -105,44 +106,36 @@ export default {
             var context   = this,
                 inputData = {
                     term: document.getElementById('edit-term-val').value,
-                    rating: document.getElementById('edit-rating').value,
+                    class: document.getElementById('edit-class').value,
                     description: tinymce.get("edit-description").getContent(),
                     links: this.links
                 };
 
             axios.post('/term/add-term', inputData)
                 .then(function (response) {
-                    var data = response.data;
-                    context.$emit('addNewTerm', data.data);
+                    context.$emit('addNewTerm', response.data.data);
                 })
                 .catch(function (error) {
                     console.log(error);
                 })
-                .then(function () {
-                    // always executed
-                });
         },
         updateTerm: function () {
             var context   = this,
                 inputData = {
                     id: this.term.id,
                     term: document.getElementById('edit-term-val').value,
-                    rating: document.getElementById('edit-rating').value,
+                    rating: document.getElementById('edit-class').value,
                     description: tinymce.get("edit-description").getContent(),
                     links: this.links
                 };
 
             axios.put('/term/update-term', inputData)
             .then(function (response) {
-                var data      = response.data;
-                context.$emit('updateEditTerm', data.data);
+                context.$emit('updateEditTerm', response.data.data);
             })
             .catch(function (error) {
                 console.log(error);
             })
-            .then(function () {
-                // always executed
-            });
         },
         addLink: function(event) {
             var editLinkInput = document.getElementById('edit-web-address-val');
@@ -158,11 +151,11 @@ export default {
     mounted() {
         this.links = this.term ? [...this.term.links] : [];
 
-        document.getElementById("edit-rating").addEventListener('input',function() {
-            var val = $(this).val();
+        document.getElementById("edit-class").addEventListener('input', function() {
+            var val = utils.convertRating($(this).val());
 
             $("#edit-rangeval").html(val);
-            utils.setColorByRangeNumber("edit-rating", "edit-rangeval");
+            utils.setColorByRangeNumber("edit-class", "edit-rangeval");
         });
     }
 }

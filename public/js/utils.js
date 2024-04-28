@@ -29,38 +29,22 @@ let utils = {
             text: "#fff"
         },
         {
-            bg: "#00b894",
-            text: "#fff"
-        },
-        {
-            bg: "#0984e3",
-            text: "#fff"
-        },
-        {
-            bg: "#74b9ff",
-            text: "#fff"
-        },
-        {
-            bg: "#fdcb6e",
-            text: "#fff"
-        },
-        {
-            bg: "#e17055",
-            text: "#fff"
-        },
-        {
-            bg: "#ff7675",
+            bg: "#ffa502",
             text: "#fff"
         },
         {
             bg: "#d63031",
+            text: "#fff"
+        },
+        {
+            bg: "#0984e3",
             text: "#fff"
         }
     ],
 
     setColorByNumber: function (num, el) {
         let color = this.ratingColors[num - 1] ?? this.ratingColors[1];
-        el.setAttribute("style", "background-color: " + color.bg + "; color: " + color.text);
+        el.setAttribute("style", "background-color: " + color.bg);
     },
 
     setColorByRangeNumber: function (rangeId, txtid) {
@@ -68,7 +52,7 @@ let utils = {
             color = this.ratingColors[val - 1] ?? this.ratingColors[1],
             el = document.getElementById(txtid);
 
-        el.setAttribute("style", "background-color: " + color.bg + "; color: " + color.text);
+        el.setAttribute("style", "background-color: " + color.bg);
     },
 
     truncateString: function(str, n) {
@@ -108,6 +92,24 @@ let utils = {
             }
         }
         return "";
-    }
+    },
+
+    convertRating(rating) {
+        let str;
+        switch(parseInt(rating)) {
+            case 1:
+                str = 'Auto Unflag';
+                break;
+            case 2:
+                str = 'Needs Context';
+                break;
+            case 3:
+                str = 'Auto Flag';
+                break;
+            default:
+                str = 'Unknown'
+        }
+        return str;
+    },
 };
 export default utils

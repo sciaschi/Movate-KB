@@ -2,8 +2,8 @@
 const tailwindcss       = require('tailwindcss'); /* Add this line at the top */
 const mix                        = require('laravel-mix');
 const LiveReloadPlugin  = require('webpack-livereload-plugin');
-const minifier          = require('minifier');
-const path              = require('path')
+const minifier               = require('minifier');
+const path                  = require('path')
 
 module.exports = {
     output: { chunkFilename: 'js/[name].js?id=[chunkhash]' },

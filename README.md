@@ -21,6 +21,8 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+Documentation can be found at [Laravel Documentation](https://laravel.com/docs/11.x)
+
 ## Setting up the project
 - Install Docker if you haven't already
 - Inside the installation folder, run: ```docker compose up```

@@ -10,7 +10,7 @@ class UserController extends Controller
 {
     public function getModerationsPerHour(Request $request) {
         $data = $request->all();
-        $user = auth()->user();
+        $user = Auth::user();
 
 //        $count = $data['moderations'];
 

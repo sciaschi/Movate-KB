@@ -2,7 +2,7 @@
     <div class="overflow-hidden shadow-sm sm:rounded-lg w-100 d-inline-block">
         <div class="p-6 h-100 w-100 d-inline-block" style="min-height: 85vh;">
             <div class="container row">
-                <div id="username_sidebar" class="col-xs-12 col-sm-12 col-md-4 bg-light shadow-sm sm:rounded-lg dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto">
+                <div id="username_sidebar" class="col-xs-12 col-sm-12 col-md-4 bg-light shadow-sm sm:rounded-lg dark:bg-slate-700 dark:text-slate-400">
                     <div class="input-group mb-3 mt-3">
                         <input @keyup="searchTrigger.invoke($event.target.value)" @keyup.delete="searchTrigger.invoke($event.target.value)"
                                id="search-input" type="text" class="form-control search-input" placeholder="Search for term..."
@@ -12,7 +12,18 @@
                         </primary-button>
                     </div>
                     <div id="search_results_div">
-                        <ul id="search_results" class="list-group list-group-flush" role="tablist">
+                        <ul v-if="isSearchEmpty" id="search_results" class="list-group list-group-flush" role="tablist">
+                            <li v-for="category in searchCategories">
+                                <span @click="expandCategoryDropdown(category)" class='dark:bg-indigo-600 dark:border dark:border-slate-700 list-group-item
+                            list-group-item-action' style="background-color: #4338ca; color:#fafafa;">{{ category.name }}</span>
+                                <div :id='"category-" + category.name.toLowerCase() + "-terms"' class="expanded">
+                                    <a @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
+                                        dark:bg-slate-800 dark:text-slate-400 dark:border dark:border-slate-700 list-group-item
+                                        list-group-item-action term_search_value' v-for="searchTerm in category.terms">{{ searchTerm.term }}</a>
+                                </div>
+                            </li>
+                        </ul>
+                        <ul v-else id="search_results" class="list-group list-group-flush" role="tablist">
                             <a @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
                             dark:bg-slate-800 dark:text-slate-400 dark:border dark:border-slate-700 list-group-item
                             list-group-item-action term_search_value' v-for="searchTerm in searchTerms">{{ searchTerm.term }}</a>
@@ -51,6 +62,8 @@ export default {
         return {
             editing: false,
             adding: false,
+            isSearchEmpty: true,
+            searchCategories: [],
             searchTerms: [],
             selectedTerm: null,
             searchTrigger: null
@@ -69,6 +82,11 @@ export default {
         toggleEdit: function () {
             this.editing = !this.editing;
         },
+        expandCategoryDropdown: function(category) {
+            const el = document.getElementById("category-" + category.name.toLowerCase() + '-terms')
+            el.classList.toggle('expanded')
+            el.classList.toggle('collapsed')
+        },
         setSelectedTerm: function (term, el) {
             this.selectedTerm = term;
             this.editing      = false;
@@ -77,17 +95,32 @@ export default {
             this.setSelectedItemBg(el);
         },
         getAllTerms: async function () {
-            var res = await axios.get(route('get-all-terms'),{
+            var res = await axios.get(route('get-all-terms-categories'),{
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 },
             });
 
-            this.searchTerms = res.data;
+            this.searchCategories = res.data['categories'];
+
+            let uncatIndex = this.searchCategories.findIndex(x => {
+                return x.name === "Uncategorized"
+            });
+
+            if(uncatIndex === -1) {
+                this.searchCategories.push({
+                    name:"Uncategorized", terms: Object.keys(res.data['uncategorized']).map((k) => res.data['uncategorized'][k])
+                })
+            }
+
+            this.searchTerms = res.data['all']
         },
         searchTerm: async function (text) {
             if (!text.length) {
-                return this.getAllTerms();
+                this.isSearchEmpty = true;
+                this.searchTerms = []
+                return;
+                // return this.getAllTerms();
             }
 
             let res = await axios.post(route('search-term'), {
@@ -95,12 +128,19 @@ export default {
             })
 
             this.searchTerms = res.data.result.hits;
+            this.isSearchEmpty = false;
         },
         updateEditTerm: function (term) {
-            var termIndex = this.searchTerms.findIndex(x => x.id === term.id);
+            var catIndex = this.searchCategories.findIndex(x => {
+                return x.terms.find(i => i.id === term.id)
+            })
 
-            this.searchTerms[termIndex] = term;
-            this.selectedTerm           = term;
+            var termIndex = this.searchCategories[catIndex].terms.findIndex(x => x.id === term.id)
+            var searchTermIndex = this.searchTerms.findIndex(x => x.id === term.id);
+
+            this.searchCategories[catIndex].terms[termIndex] = term;
+            this.searchTerms[searchTermIndex] = term
+            this.selectedTerm = term;
             this.toggleEdit();
         },
         addNewTerm: function (newTerm) {
@@ -109,12 +149,6 @@ export default {
             this.client.index('terms').addDocuments(newTerm);
             this.adding = false;
         }
-    },
-    beforeUnmount: function() {
-
-    },
-    created: function() {
-
     },
     mounted: async function() {
         await this.getAllTerms();
@@ -131,5 +165,19 @@ export default {
         height:unset;
         border-top-left-radius: 0!important;
         border-bottom-left-radius: 0!important;
+    }
+    #username_sidebar {
+        height:88vh;
+        overflow-y: auto
+    }
+    .collapsed {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height .5s ease-out;
+    }
+    .expanded {
+        overflow: hidden;
+        max-height: 100vh;
+        transition: max-height .5s ease-in;
     }
 </style>

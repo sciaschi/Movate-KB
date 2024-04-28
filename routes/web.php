@@ -26,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::get('/term/get-recently-added-terms' , 'App\Http\Controllers\Term\TermController@getRecentlyAddedTerms')->name('get-recently-added-terms');
     Route::get('/term/get-all-terms'            , 'App\Http\Controllers\Term\TermController@getAllTerms')->name('get-all-terms');
+    Route::get('/term/get-all-term-categories'  , 'App\Http\Controllers\Term\TermController@getAllTermCategories')->name('get-all-terms-categories');
     Route::get('/term/term-links-by-id/{id}'    , 'App\Http\Controllers\Term\TermController@getTermLinksById')->name('get-term-links-by-id');
     Route::put('/term/update-term'              , 'App\Http\Controllers\Term\TermController@updateTerm')->name('update-term');
     Route::post('/term/add-term'                , 'App\Http\Controllers\Term\TermController@addTerm')->name('add-term');
