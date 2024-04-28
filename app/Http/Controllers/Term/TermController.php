@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Term;
 
+use App\Models\Term\TermCategory;
+use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -55,7 +57,7 @@ class TermController extends Controller
      */
     public function index() {
         return Inertia::render('SearchTerms/Index', [
-            'can-add-term' => auth()->user()->can('add-term')
+            'can-add-term' => Auth::user()->can('add-term')
         ]);
     }
 
@@ -153,7 +155,7 @@ class TermController extends Controller
             'description'   => 'required|string'
         ]);
 
-        // Validate the request...
+        // Validate the request
         if($validated->fails())
         {
             return response()->json([
@@ -214,6 +216,19 @@ class TermController extends Controller
         ]);
     }
 
+    public function getAllTermCategories() {
+        $cats = TermCategory::with('terms.links')->orderBy('name')->get();
+        $allTerms = Term::with('links')->orderBy('term')->get();
+
+        $ids = $cats->pluck('terms')->flatten()->pluck('id')->toArray();
+
+        return [
+            'all'           => $allTerms,
+            'categories'    => $cats,
+            'uncategorized' => $allTerms->whereNotIn('id', $ids)->all()
+        ];
+    }
+
     /**
      * Get Recently Added Trends Sorted by created_at desc
      *
@@ -224,13 +239,11 @@ class TermController extends Controller
     {
         $data   = $request->all();
         $count = $data['count'] ?? 12;
-        $termsData = Term::orderBy('created_at', 'desc')->limit($count)->get();
-
-        $terms = collect($termsData);
+        $terms = Term::orderBy('created_at', 'desc')->limit($count)->get();
 
         return response()->json([
             'status' => true,
-            'terms' => $terms
+            'terms' => collect($terms)
         ]);
     }
 

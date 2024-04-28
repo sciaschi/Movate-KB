@@ -18,7 +18,6 @@ button {
     background-color:#4338ca !important;
 }
 button:hover {
-    height: 40px;
     background-color: #4d43c7 !important;
 }
 </style>

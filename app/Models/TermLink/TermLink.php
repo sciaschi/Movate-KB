@@ -45,6 +45,7 @@ class TermLink extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'term_id',
         'link_url'
     ];

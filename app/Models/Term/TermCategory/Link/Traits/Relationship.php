@@ -13,7 +13,7 @@ trait Relationship
      */
     public function term()
     {
-        return $this->hasOne(Term::class, 'term_id');
+        return $this->hasOne(Term::class, 'id', 'term_id');
     }
 
     /**

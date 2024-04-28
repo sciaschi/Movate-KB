@@ -12,6 +12,7 @@ import route from "ziggy-js";
 import moment from "moment";
 import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
 import ComponentLayout from "@jsAssets/Shared/Widgets/Shared/dashboard-component-layout.vue";
+import utils from "@jsAssets/utils";
 
 export default {
     name: "RecentlyAddedTermsComponent",
@@ -54,17 +55,17 @@ export default {
             {
                 id: 'rating',
                 render: function (data) {
-                      return "<span class='ra-term-rating rating-"+ data.rating +"'>" + data.rating + "</span>";
+                      return "<span class='ra-term-rating class-"+ data.rating +"'>" + utils.convertRating(data.rating) + "</span>";
                 },
-                name: 'Rating'
+                name: 'Rule'
             },
-            {
-                id: null,
-                render: function(data) {
-                    // return data.description;
-                },
-                name: 'Actions'
-            },
+            // {
+            //     id: null,
+            //     render: function(data) {
+            //         // return data.description;
+            //     },
+            //     name: 'Actions'
+            // },
         ];
     },
     beforeUnmount () {

@@ -1,21 +1,16 @@
 <template>
     <div id="detailsPanel" class="row p-3">
-        <div class="col-8">
+        <div class="col-12">
             <span id="detailsTerm" class="fs-1 fw-bold">
                 <span>{{ term.term }}</span>
-                <span id="detailRatingSpan" class="fs-4 term-rating ml-5 text-white" :class="'rating-' + term.rating">
-                    {{ term.rating }}
+                <span id="detailRatingSpan" class="fs-4 term-rating ml-5 text-white" :class="'class-' + term.rating">
+                    {{ utils().convertRating(term.rating) }}
                 </span>
             </span>
-        </div>
-        <div class="col-4 text-end d-inline">
             <span id="edit-term-btn-container" class="fs-3">
-                <primary-button @click="this.$parent.toggleEdit()" id="edit-term-btn" type="button" class="btn btn-outline-primary">
+                <primary-button @click="this.$parent.toggleEdit()" id="edit-term-btn" type="button" class="btn btn-outline-primary float-right">
                     <i class="fa-regular fa-pen-to-square"></i>
                 </primary-button>
-            </span>
-            <span id="detailsDateAdded">
-                Created: {{ formatSelectedTermDate(term.created_at) }}
             </span>
         </div>
         <div class="col-12 mb-3 mt-3">
@@ -47,19 +42,19 @@
 </template>
 
 <script>
-import moment from "moment";
 import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
+import utils from "@jsAssets/utils"
 
 export default {
     name: "TermDetails",
     components: {PrimaryButton},
     props: {
-        term: Object
+        term: null
     },
     methods: {
-        formatSelectedTermDate: function (date) {
-            return moment(date).format("MMMM Do YYYY");
-        },
+        utils: function() {
+            return utils
+        }
     }
 }
 </script>

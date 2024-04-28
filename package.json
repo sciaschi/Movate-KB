@@ -1,7 +1,7 @@
 {
     "private": true,
     "scripts": {
-        "dev": "php artisan ziggy:generate && npx mix watch",
+        "dev": "php artisan config:cache && php artisan cache:clear && php artisan ziggy:generate && npx mix watch",
         "rebuild": "npx mix && php artisan config:cache && php artisan cache:clear && composer dump-autoload",
         "build": "npx mix && php artisan serve --port 3020 --host 10.0.0.13",
         "prod": "mix --production && mix --production --mix-config=webpack.ssr.mix.js"

@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use App\Helpers\TableBuilder;
 use App\Models\Term\Term;
+use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
@@ -18,7 +19,7 @@ class SearchTermDetails extends Component
 
     public function boot() {
 
-        $this->canEditTerm  = auth()->user()->can('edit-terms');
+        $this->canEditTerm  = Auth::user()->can('edit-terms');
         $this->tableBuilder = new TableBuilder([], []);
     }
 
