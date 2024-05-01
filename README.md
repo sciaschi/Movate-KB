@@ -29,11 +29,10 @@ Documentation can be found at [Laravel Documentation](https://laravel.com/docs/1
 - Double check that the servers are all up and running
 - **Note: the ENV file needs to corrolate with the name of the docker service names. This should already be set by default. e.g 'db', 'php'**
 - Run Commands in Order:
-  - ```php artisan key:generate```
-  - ```php artisan config:cache```
-  - ```php artisan cache:clear```
+  - ```composer install```
+  - ```npm install```
   - ```php artisan migrate``` 
-  - ```php artisan ziggy:generate```
+  - ```npm run dev```
 
 ## Security Vulnerabilities
 
