@@ -22,7 +22,7 @@ export default {
             console.log(this.$root.$refs.counter);
 
             if(this.cookies.get('page-count')) {
-                let res = await axios.post(route('mods-per-hour'), {
+                let res = await axios.get(route('mods-per-hour'), {
                     moderations: this.cookies.get('page-count')
                 })
                 console.log(moment().hour());

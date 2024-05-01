@@ -34,7 +34,7 @@ class TermController extends Controller
      *  TermController Constructor
      */
     public function __construct() {
-        $this->client   = new Client(env('MEILISEARCH_HOST', 'http://localhost:7700'), env('MEILI_MASTER_KEY', null));
+        $this->client   = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
         $this->terms    = Term::with('links')->orderBy('term')->get();
 
         $unJson = json_decode($this->terms->toJson());
@@ -57,7 +57,8 @@ class TermController extends Controller
      */
     public function index() {
         return Inertia::render('SearchTerms/Index', [
-            'can-add-term' => Auth::user()->can('add-term')
+            'can-add-term' => Auth::user()->can('add-term'),
+            'categories'   => TermCategory::all()
         ]);
     }
 
@@ -307,7 +308,6 @@ class TermController extends Controller
         if(isset($data['links']))
         {
             $links          = [];
-
             $flattenedLinks = collect($data['links'])->flatten()->all();
 
             foreach($flattenedLinks as $link) {

@@ -11,10 +11,15 @@
         </tr>
     </thead>
     <tbody>
-        <tr v-for="row in data">
+        <tr v-if="data && data.length" v-for="row in data">
             <td v-for="column in columns">
                 <span v-if="column.render" :class="column.classList" v-html="column.render(row)"></span>
                 <span v-else>{{row[column.id]}}</span>
+            </td>
+        </tr>
+        <tr v-else class="text-center">
+            <td :colspan="columns.length">
+                <span> Nothing to show yet!</span>
             </td>
         </tr>
     </tbody>
