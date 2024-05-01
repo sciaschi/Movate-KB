@@ -7,44 +7,22 @@
             <label for="edit-class" class="form-label">Class <span id="edit-rangeval" class="fs-6 term-rating ml-5 text-white" :class="!adding ? 'class-'+ term.rating : 'class-1'">{{ !adding ? utils().convertRating(term.rating) : '1' }}</span></label>
             <input type="range" class="form-range" min="1" max="4" id="edit-class" :value="!adding ? term.rating : '1'">
         </div>
-        <div class="col-12 mt-2">
-            <editor api-key="b28l0twrnfpoia2kkfocy20i6yvxkem4m1nptacdtkz0aslk" :init="{
-                height: 500,
-                plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks ' +
-                'visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor ' +
-                'insertdatetime advlist lists wordcount help charmap quickbars emoticons',
-                toolbar: 'undo redo | blocks | ' +
-                'bold italic backcolor | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help',
-                content_style: 'body { font-size:16px }',
-                table_default_attributes: {
-                    class: 'static-table table-auto'
-                },
-                table_default_styles: {
-                    width   : '100%',
-                    overflow: 'hidden'
-                },
-                table_header_type: 'auto',
-                skin: (useDarkMode ? 'oxide-dark' : ''),
-                content_css: (useDarkMode ? 'dark' : '')
-            }" id="edit-description" class="form-control" rows="3" placeholder="Notes/Nuances (if any)" :initial-value="!adding ? term.description : ''"></editor>
+        <div class="col-12 mt-2" style="height:100%;">
+            <quill-editor ref="quillEditor" class="form-control" toolbar="full" :content="!adding ? term.description : ''" contentType="html"></quill-editor>
         </div>
-        <div class="col-6 mt-2 float-right">
+        <div class="col-6 mt-1">
             <div class="input-group">
-                <input type="text" id="edit-web-address-val" class="form-control" placeholder="Enter Link Url..." aria-label="Enter Link Url..." aria-describedby="edit-add-web-address-btn">
+                <input type="text" id="edit-web-address-val" class="form-control" placeholder="Enter Source Url..." aria-label="Enter Source Url..." aria-describedby="edit-add-web-address-btn">
                 <primary-button @click="addLink" class="btn-outline-light bg-primary" type="button" id="edit-add-web-address-btn">
                     <i class="fa-solid fa-plus"></i>
                 </primary-button>
             </div>
-        </div>
-        <div class="col-12 mt-2">
             <div id="edit-links-table">
                 <table class="table-auto static-table">
                     <thead>
                         <tr>
                             <th class="rounded-t-lg">
-                                Links
+                                Source
                             </th>
                             <th class="rounded-t-lg">
                                 Actions
@@ -64,9 +42,16 @@
                 </table>
             </div>
         </div>
+        <div class="col-6 mt-1 float-right">
+            <label for="edit-category" class="form-label">Category </label>
+            <select id="edit-category"></select>
+        </div>
         <div class="col-12 mt-2">
-            <button id="save-term-edit-btn" type="button" class="btn btn-outline-success float-right" @click="!adding ? updateTerm() : addTerm()">
+            <button id="save-term-edit-btn" type="button" class="btn bg-green-600 float-right" @click="!adding ? updateTerm() : addTerm()">
                 <i class="fa-regular fa-floppy-disk"></i> Save
+            </button>
+            <button id="cancel-edit-btn" type="button" class="btn bg-red-600 float-right" @click="!adding ? updateTerm() : addTerm()">
+                <i class="fa-regular fa-xmark-circle"></i> Cancel
             </button>
         </div>
     </div>
@@ -77,20 +62,25 @@ import moment from "moment";
 import Editor from '@tinymce/tinymce-vue';
 import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
 import utils from "@jsAssets/utils"
+import {QuillEditor} from "@vueup/vue-quill";
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
     name: "TermEdit",
     props: {
         term: Object,
+        categories: Object,
         adding: Boolean
     },
     components: {
+        QuillEditor,
         PrimaryButton,
         'moment': moment,
         'editor': Editor
     },
     data () {
         return {
+            description: null,
             links: []
         }
     },
@@ -99,15 +89,13 @@ export default {
         utils() {
             return utils
         },
-        useDarkMode: function() {
-            return window.matchMedia('(prefers-color-scheme: dark)').matches
-        },
         addTerm: function() {
             var context   = this,
                 inputData = {
                     term: document.getElementById('edit-term-val').value,
-                    class: document.getElementById('edit-class').value,
-                    description: tinymce.get("edit-description").getContent(),
+                    rating: document.getElementById('edit-class').value,
+                    category: document.getElementById('edit-category').value,
+                    description: this.$refs.quillEditor.getHtml(),
                     links: this.links
                 };
 
@@ -125,7 +113,8 @@ export default {
                     id: this.term.id,
                     term: document.getElementById('edit-term-val').value,
                     rating: document.getElementById('edit-class').value,
-                    description: tinymce.get("edit-description").getContent(),
+                    category: document.getElementById('edit-category').value,
+                    description: this.$refs.quillEditor.getHTML(),
                     links: this.links
                 };
 
@@ -150,7 +139,6 @@ export default {
     },
     mounted() {
         this.links = this.term ? [...this.term.links] : [];
-
         document.getElementById("edit-class").addEventListener('input', function() {
             var val = utils.convertRating($(this).val());
 

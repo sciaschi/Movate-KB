@@ -22,7 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/trend/store'      , 'App\Http\Controllers\User\Dashboard\DashboardController@storeTrendUrl')->name('add_trend');
     Route::get('/trend/get-trends'  , 'App\Http\Controllers\User\Dashboard\DashboardController@getTrends')->name('get_trends');
 
-    Route::post('/user/get-mods-per-hour'  , 'App\Http\Controllers\User\UserController@getModerationsPerHour')->name('mods-per-hour');
+    Route::get('/user/get-mods-per-hour'  , 'App\Http\Controllers\User\UserController@getModerationsPerHour')->name('mods-per-hour');
 
     Route::get('/term/get-recently-added-terms' , 'App\Http\Controllers\Term\TermController@getRecentlyAddedTerms')->name('get-recently-added-terms');
     Route::get('/term/get-all-terms'            , 'App\Http\Controllers\Term\TermController@getAllTerms')->name('get-all-terms');

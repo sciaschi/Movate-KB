@@ -18,25 +18,10 @@
                  v-html="term.description">
             </div>
         </div>
-        <div v-show="term.links ? term.links.length : false" class="col-12">
-            <div id="detailsLinksTable">
-                <table class="table-auto static-table">
-                    <thead>
-                    <tr>
-                        <th class="rounded-t-lg">
-                            Links
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="link in term.links">
-                        <td>
-                            <a :href="link.link_url" target="_blank">{{link.link_url}}</a>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="col-12">
+            <fx-table :columns='[{id: "link_url", name: "Sources", render: function(el) {
+                return "<a href=" + el.link_url + " target=\"_blank\">"+ el.link_url +"</a>"
+            }}]' :data="this.term.links"></fx-table>
         </div>
     </div>
 </template>
@@ -44,17 +29,24 @@
 <script>
 import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
 import utils from "@jsAssets/utils"
+import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
 
 export default {
     name: "TermDetails",
-    components: {PrimaryButton},
+    components: {FxTable, PrimaryButton},
     props: {
         term: null
+    },
+    data () {
+        return {
+        }
     },
     methods: {
         utils: function() {
             return utils
         }
+    },
+    mounted() {
     }
 }
 </script>

@@ -70,7 +70,6 @@ export default {
     },
     beforeUnmount () {
         clearInterval(this.polling)
-
     },
     created () {
         this.pollData();

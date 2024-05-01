@@ -34,7 +34,7 @@
                     <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto; padding:10px;">
                         <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm"  v-if="adding || selectedTerm"
                                     :adding="adding" :is="editing || adding ? 'term-edit' : 'term-details'"
-                                    :term="selectedTerm">
+                                    :term="selectedTerm" :categories="categories">
                         </component>
                     </div>
                 </div>
@@ -44,7 +44,6 @@
 </template>
 
 <script>
-import {MeiliSearch} from "meilisearch";
 import TermDetails from "./TermDetails";
 import TermEdit from "./TermEdit";
 import route from "ziggy-js";
@@ -57,6 +56,9 @@ export default {
         PrimaryButton,
         TermEdit,
         TermDetails
+    },
+    props: {
+        categories: Object,
     },
     data () {
         return {
@@ -151,6 +153,8 @@ export default {
         }
     },
     mounted: async function() {
+        console.log(this.categories)
+
         await this.getAllTerms();
         this.searchTrigger = new utils.rollingTrigger(this.searchTerm, 500);
     }
@@ -177,7 +181,7 @@ export default {
     }
     .expanded {
         overflow: hidden;
-        max-height: 100vh;
+        max-height: 10000vh;
         transition: max-height .5s ease-in;
     }
 </style>

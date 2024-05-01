@@ -7,7 +7,7 @@
             <div>
                 <select name="source-lang" @change="setSourceLanguage($event)">
                     <option value="null">Auto Detect</option>
-                    <option v-for="lang in sourceLanguages" :value="lang.code">{{lang.name}}</option>
+                    <option v-for="lang in this.languages.source" :value="lang.code">{{lang.name}}</option>
                 </select>
             </div>
             <textarea id="translate-from" placeholder="Enter Text..." @keyup="translateTrigger.invoke($event.target.value)" @keyup.delete="translateTrigger.invoke($event.target.value)"></textarea>
@@ -15,7 +15,7 @@
         <div id="target-container">
             <div>
                 <select name="target-lang"  @change="setTargetLanguage($event)" v-model="targetLang">
-                    <option v-for="lang in targetLanguages" :value="lang.code">{{lang.name}}</option>
+                    <option v-for="lang in this.languages.target" :value="lang.code">{{lang.name}}</option>
                 </select>
             </div>
             <textarea id="translate-result" placeholder="Translation" readonly>{{translatedText}}</textarea>
@@ -29,6 +29,9 @@ import route from "ziggy-js";
 
 export default {
     name: "Translate",
+    props: {
+        languages: Object
+    },
     data() {
         return {
             translateTrigger: null,
@@ -56,12 +59,6 @@ export default {
 
             this.translatedText = res.data.data.text
         },
-        getLanguages: async function() {
-            let res = await axios.get(route('get-languages'));
-
-            this.sourceLanguages = res.data.data.source;
-            this.targetLanguages = res.data.data.target;
-        },
         setSourceLanguage: function(event) {
             if(typeof event === 'string') {
                 this.sourceLang = event;
@@ -75,8 +72,7 @@ export default {
             this.targetLang = event.target.value;
         }
     },
-    async mounted() {
-        await this.getLanguages();
+    mounted() {
         this.translateTrigger = new utils.rollingTrigger(this.translateText, 750);
     }
 }

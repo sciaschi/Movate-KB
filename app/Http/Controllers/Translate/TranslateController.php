@@ -12,8 +12,24 @@ use Validator;
 
 class TranslateController extends Controller
 {
+    private $translator;
+
+    /**
+     * @throws DeepLException
+     */
+    public function __construct()
+    {
+        $this->translator = new Translator(config('deepl.key'));
+    }
+
+
+    /**
+     * @throws DeepLException
+     */
     public function index() {
-        return Inertia::render('Translate/Index');
+        return Inertia::render('Translate/Index', [
+            'languages' => $this->getLanguages()
+        ]);
     }
 
     /**
@@ -33,8 +49,7 @@ class TranslateController extends Controller
             ], 500);
         }
 
-        $translator = new Translator(env('DEEPL_API_KEY'));
-        $translatedText = $translator->translateText($data['text'], $data['source_lang'], $data['target_lang']);
+        $translatedText = $this->translator->translateText($data['text'], $data['source_lang'], $data['target_lang']);
         return response()->json([
             "status" => true,
             "data" => $translatedText
@@ -45,21 +60,16 @@ class TranslateController extends Controller
      * @throws DeepLException
      */
     public function getLanguages() {
-        $translator      = new Translator(env('DEEPL_API_KEY'));
-        $sourceLanguages = $translator->getSourceLanguages();
-        $targetLanguages = $translator->getTargetLanguages();
+        $sourceLanguages = $this->translator->getSourceLanguages();
+        $targetLanguages = $this->translator->getTargetLanguages();
 
         sort($sourceLanguages);
         sort($targetLanguages);
 
-        $languages = [
+        return [
             'source' => $sourceLanguages,
             'target' => $targetLanguages
         ];
-
-        return response()->json([
-            "status" => true,
-            "data" => $languages
-        ]);
+;
     }
 }

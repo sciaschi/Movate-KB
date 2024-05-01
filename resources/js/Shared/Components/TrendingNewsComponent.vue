@@ -126,8 +126,8 @@ export default {
         await this.getTrends();
         this.pollData();
     },
-    unmounted: function () {
-        this.polling = null;
+    beforeUnmount: function () {
+        clearInterval(this.polling)
     }
 }
 </script>
