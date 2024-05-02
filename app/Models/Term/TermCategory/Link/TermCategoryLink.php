@@ -5,10 +5,10 @@ namespace App\Models\Term\TermCategory\Link;
 use App\Models\Term\TermCategory\Link\Traits\Relationship;
 use App\Models\Term\TermCategory\Link\Traits\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Laravel\Scout\Searchable;
 
-class TermCategoryLink extends Model
+class TermCategoryLink extends Pivot
 {
     use HasFactory, Attribute, Relationship, Searchable;
 
@@ -40,7 +40,7 @@ class TermCategoryLink extends Model
      */
     protected $fillable = [
         'term_id',
-        'tag_id'
+        'category_id'
     ];
 
     /**

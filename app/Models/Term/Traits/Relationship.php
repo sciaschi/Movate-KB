@@ -3,11 +3,10 @@
 namespace App\Models\Term\Traits;
 
 use App\Models\Term\TermCategory;
-use App\Models\Term\TermCategory\Link\TermCategoryLink;
 use App\Models\Term\TermTag\Link\TermTagLink;
 use App\Models\TermLink\TermLink;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 trait Relationship
 {
@@ -29,10 +28,10 @@ trait Relationship
     }
 
     /**
-     * @return HasOneThrough
+     * @return BelongsToMany
      */
     public function categories()
     {
-        return $this->hasOneThrough(TermCategory::class, TermCategoryLink::class, 'term_id', 'id', 'id', 'term_id');
+        return $this->belongsToMany(TermCategory::class, 'term_categories_link', 'term_id', 'category_id');
     }
 }

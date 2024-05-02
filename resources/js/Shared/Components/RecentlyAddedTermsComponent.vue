@@ -58,14 +58,7 @@ export default {
                       return "<span class='ra-term-rating class-"+ data.rating +"'>" + utils.convertRating(data.rating) + "</span>";
                 },
                 name: 'Rule'
-            },
-            // {
-            //     id: null,
-            //     render: function(data) {
-            //         // return data.description;
-            //     },
-            //     name: 'Actions'
-            // },
+            }
         ];
     },
     beforeUnmount () {

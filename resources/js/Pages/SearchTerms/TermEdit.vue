@@ -44,7 +44,9 @@
         </div>
         <div class="col-6 mt-1 float-right">
             <label for="edit-category" class="form-label">Category </label>
-            <select id="edit-category"></select>
+            <select id="edit-category" v-model="termCategory">
+                <option v-for="category in categories" :value="category.id">{{category.name}}</option>
+            </select>
         </div>
         <div class="col-12 mt-2">
             <button id="save-term-edit-btn" type="button" class="btn bg-green-600 float-right" @click="!adding ? updateTerm() : addTerm()">
@@ -69,7 +71,7 @@ export default {
     name: "TermEdit",
     props: {
         term: Object,
-        categories: Object,
+        categories: Array,
         adding: Boolean
     },
     components: {
@@ -81,10 +83,11 @@ export default {
     data () {
         return {
             description: null,
+            termCategory: null,
             links: []
         }
     },
-    emits: ['updateEditTerm', 'addNewTerm'],
+    emits: ['updateEditTerm', 'addNewTerm', 'loading'],
     methods: {
         utils() {
             return utils
@@ -98,10 +101,11 @@ export default {
                     description: this.$refs.quillEditor.getHtml(),
                     links: this.links
                 };
-
+            this.$emit('loading', true)
             axios.post('/term/add-term', inputData)
                 .then(function (response) {
                     context.$emit('addNewTerm', response.data.data);
+                    context.$emit('loading', false)
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -118,9 +122,12 @@ export default {
                     links: this.links
                 };
 
+            this.$emit('loading', true)
+
             axios.put('/term/update-term', inputData)
             .then(function (response) {
                 context.$emit('updateEditTerm', response.data.data);
+                context.$emit('loading', false)
             })
             .catch(function (error) {
                 console.log(error);
@@ -139,6 +146,8 @@ export default {
     },
     mounted() {
         this.links = this.term ? [...this.term.links] : [];
+        console.log(this.term);
+        this.termCategory = this.term.categories.length > 0 ? this.term.categories[0].id : 0;
         document.getElementById("edit-class").addEventListener('input', function() {
             var val = utils.convertRating($(this).val());
 
