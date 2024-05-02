@@ -35,7 +35,7 @@ class TermController extends Controller
      */
     public function __construct() {
         $this->client   = new Client(config('scout.meilisearch.host'), config('scout.meilisearch.key'));
-        $this->terms    = Term::with('links')->orderBy('term')->get();
+        $this->terms    = Term::with(['categories','links'])->orderBy('term')->get();
 
         $unJson = json_decode($this->terms->toJson());
 
@@ -58,7 +58,7 @@ class TermController extends Controller
     public function index() {
         return Inertia::render('SearchTerms/Index', [
             'can-add-term' => Auth::user()->can('add-term'),
-            'categories'   => TermCategory::all()
+            'categories'   => TermCategory::all()->toArray()
         ]);
     }
 
@@ -90,6 +90,7 @@ class TermController extends Controller
         $validated = Validator::make($data, [
             'term'          => 'required|string',
             'rating'        => 'required|integer',
+            'category'      => 'integer',
             'description'   => 'required|string'
         ]);
 
@@ -107,6 +108,7 @@ class TermController extends Controller
         $termObj->term        = $data['term'];
         $termObj->rating      = $data['rating'];
         $termObj->description = $data['description'];
+        $termObj->categories()->sync([$data['category']]);
 
         $links = [];
 
@@ -153,6 +155,7 @@ class TermController extends Controller
         $validated = Validator::make($data, [
             'term'          => 'required|string',
             'rating'        => 'required|integer',
+            'category'      => 'integer',
             'description'   => 'required|string'
         ]);
 
@@ -170,6 +173,8 @@ class TermController extends Controller
         $termObj->term          = $data['term'];
         $termObj->rating        = $data['rating'];
         $termObj->description   = $data['description'];
+
+        $termObj->categories()->sync([$data['category']]);
 
         $links = [];
 
@@ -210,6 +215,7 @@ class TermController extends Controller
 
         $termObj->save();
         $termObj->refresh();
+        $termObj['category'] = $data['category'];
 
         return response()->json([
             "status"    => true,
@@ -218,8 +224,8 @@ class TermController extends Controller
     }
 
     public function getAllTermCategories() {
-        $cats = TermCategory::with('terms.links')->orderBy('name')->get();
-        $allTerms = Term::with('links')->orderBy('term')->get();
+        $cats = TermCategory::with(['terms.categories', 'terms.links'])->orderBy('name')->get();
+        $allTerms = Term::with(['categories', 'links'])->orderBy('term')->get();
 
         $ids = $cats->pluck('terms')->flatten()->pluck('id')->toArray();
 

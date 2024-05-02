@@ -6,36 +6,42 @@
                     <div class="input-group mb-3 mt-3">
                         <input @keyup="searchTrigger.invoke($event.target.value)" @keyup.delete="searchTrigger.invoke($event.target.value)"
                                id="search-input" type="text" class="form-control search-input" placeholder="Search for term..."
-                               aria-describedby="search-input-button">
-                        <primary-button @click="this.adding = true" class="btn btn-outline-light bg-primary" type="button" id="search-input-button">
+                               aria-describedby="search-input-button" :disabled="loading">
+                        <primary-button @click="this.adding = true" :disabled="loading" class="btn btn-outline-light bg-primary" type="button" id="search-input-button">
                             <i class="fa-solid fa-plus"></i>
                         </primary-button>
                     </div>
                     <div id="search_results_div">
                         <ul v-if="isSearchEmpty" id="search_results" class="list-group list-group-flush" role="tablist">
                             <li v-for="category in searchCategories">
-                                <span @click="expandCategoryDropdown(category)" class='dark:bg-indigo-600 dark:border dark:border-slate-700 list-group-item
-                            list-group-item-action' style="background-color: #4338ca; color:#fafafa;">{{ category.name }}</span>
-                                <div :id='"category-" + category.name.toLowerCase() + "-terms"' class="expanded">
-                                    <a @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
+                                <fx-accordion :id="category.name" :title="category.name">
+                                    <div @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
                                         dark:bg-slate-800 dark:text-slate-400 dark:border dark:border-slate-700 list-group-item
-                                        list-group-item-action term_search_value' v-for="searchTerm in category.terms">{{ searchTerm.term }}</a>
-                                </div>
+                                        list-group-item-action term_search_value ' v-for="searchTerm in category.terms">
+                                        {{ searchTerm.term }}
+                                    </div>
+                                </fx-accordion>
                             </li>
                         </ul>
-                        <ul v-else id="search_results" class="list-group list-group-flush" role="tablist">
-                            <a @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
+                        <ul v-else id="search_results" class="list-group list-group-flush" role="tablist" :class="searchLoading ? 'overflow-hidden' : ''">
+                            <li @click="setSelectedTerm(searchTerm, $event.target)" class='active:bg-indigo-300
                             dark:bg-slate-800 dark:text-slate-400 dark:border dark:border-slate-700 list-group-item
-                            list-group-item-action term_search_value' v-for="searchTerm in searchTerms">{{ searchTerm.term }}</a>
+                            list-group-item-action term_search_value' v-for="searchTerm in searchTerms">{{ searchTerm.term }}</li>
                         </ul>
+                        <div v-if="searchLoading" class="overlay">
+                            <span class="lds-dual-ring"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-8">
+                <div class="col-xs-12 col-sm-12 col-md-8 position-relative">
                     <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto; padding:10px;">
-                        <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm"  v-if="adding || selectedTerm"
+                        <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm" @loading="isLoading"  v-if="adding || selectedTerm"
                                     :adding="adding" :is="editing || adding ? 'term-edit' : 'term-details'"
                                     :term="selectedTerm" :categories="categories">
                         </component>
+                    </div>
+                    <div v-if="loading" class="overlay">
+                        <span class="lds-dual-ring"></span>
                     </div>
                 </div>
             </div>
@@ -49,10 +55,12 @@ import TermEdit from "./TermEdit";
 import route from "ziggy-js";
 import utils from "@jsAssets/utils";
 import PrimaryButton from "@jsAssets/Shared/Widgets/primary-button.vue";
+import FxAccordion from "@jsAssets/Shared/Widgets/fx-accordion.vue";
 
 export default {
     name: "Index",
     components: {
+        FxAccordion,
         PrimaryButton,
         TermEdit,
         TermDetails
@@ -64,6 +72,8 @@ export default {
         return {
             editing: false,
             adding: false,
+            loading: false,
+            searchLoading: false,
             isSearchEmpty: true,
             searchCategories: [],
             searchTerms: [],
@@ -84,12 +94,14 @@ export default {
         toggleEdit: function () {
             this.editing = !this.editing;
         },
-        expandCategoryDropdown: function(category) {
-            const el = document.getElementById("category-" + category.name.toLowerCase() + '-terms')
-            el.classList.toggle('expanded')
-            el.classList.toggle('collapsed')
+        isLoading: function(e) {
+            this.loading = e;
         },
         setSelectedTerm: function (term, el) {
+            if(this.loading) {
+                return
+            }
+
             this.selectedTerm = term;
             this.editing      = false;
             this.adding       = false;
@@ -116,13 +128,16 @@ export default {
             }
 
             this.searchTerms = res.data['all']
+            this.loading = false;
         },
         searchTerm: async function (text) {
+            this.searchLoading = true;
+
             if (!text.length) {
                 this.isSearchEmpty = true;
                 this.searchTerms = []
+                this.searchLoading = false;
                 return;
-                // return this.getAllTerms();
             }
 
             let res = await axios.post(route('search-term'), {
@@ -130,17 +145,24 @@ export default {
             })
 
             this.searchTerms = res.data.result.hits;
+            this.searchLoading = false;
             this.isSearchEmpty = false;
         },
         updateEditTerm: function (term) {
-            var catIndex = this.searchCategories.findIndex(x => {
+            let searchCatIndex = this.searchCategories.findIndex(x => {
                 return x.terms.find(i => i.id === term.id)
             })
 
-            var termIndex = this.searchCategories[catIndex].terms.findIndex(x => x.id === term.id)
-            var searchTermIndex = this.searchTerms.findIndex(x => x.id === term.id);
+            let termIndex = this.searchCategories[searchCatIndex].terms.findIndex(x => x.id === term.id)
+            let searchTermIndex = this.searchTerms.findIndex(x => x.id === term.id);
 
-            this.searchCategories[catIndex].terms[termIndex] = term;
+            let catIndex = this.searchCategories.findIndex(x => {
+                return x.id.toString() === term.category
+            })
+
+            this.searchCategories[searchCatIndex].terms.splice(termIndex, 1);
+            this.searchCategories[catIndex].terms.push(term)
+
             this.searchTerms[searchTermIndex] = term
             this.selectedTerm = term;
             this.toggleEdit();
@@ -153,8 +175,7 @@ export default {
         }
     },
     mounted: async function() {
-        console.log(this.categories)
-
+        this.loading = true;
         await this.getAllTerms();
         this.searchTrigger = new utils.rollingTrigger(this.searchTerm, 500);
     }
@@ -171,17 +192,67 @@ export default {
         border-bottom-left-radius: 0!important;
     }
     #username_sidebar {
+        position:relative;
         height:88vh;
         overflow-y: auto
     }
-    .collapsed {
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height .5s ease-out;
+    .overlay {
+        position: absolute;
+        display: flex; /* Hidden by default */
+        width: 100%; /* Full width (cover the whole page) */
+        height: 100%; /* Full height (cover the whole page) */
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+        cursor: pointer; /* Add a pointer on hover */
     }
-    .expanded {
-        overflow: hidden;
-        max-height: 10000vh;
-        transition: max-height .5s ease-in;
+    .overlay > i {
+        animation: rotation infinite 1s linear;
+    }
+    @keyframes rotation{
+        from{
+            transform:rotate(0deg);
+        }
+
+        to{
+            transform:rotate(360deg);
+        }
+    }
+    .lds-dual-ring {
+        /* change color here */
+        color: #6043a8
+    }
+    .lds-dual-ring,
+    .lds-dual-ring:after {
+        box-sizing: border-box;
+    }
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border-radius: 50%;
+        border: 6.4px solid currentColor;
+        border-color: currentColor transparent currentColor transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 </style>
