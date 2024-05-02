@@ -60,14 +60,7 @@ export default {
     data() {
        return {
            trends: null,
-           layout: [
-               {"x":0,"y":0,"w":1,"h":2,"i":"trend-1"},
-               {"x":1,"y":0,"w":1,"h":2,"i":"trend-2"},
-               // {"x":2,"y":0,"w":1,"h":2,"i":"trend-3"},
-               // {"x":0,"y":1,"w":1,"h":2,"i":"trend-4"},
-               // {"x":1,"y":1,"w":1,"h":2,"i":"trend-5"},
-               // {"x":2,"y":1,"w":1,"h":2,"i":"trend-6"},
-           ]
+           layout: []
        }
     },
     methods: {
@@ -82,8 +75,17 @@ export default {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
-
+            this.layout = [];
             this.trends = res.data.trends;
+            for(let i = 0; i < 6; i++) {
+                this.layout.push({
+                    x: (this.layout.length) % 3,
+                    y: (this.layout.length * 3) % 2, // puts it at the bottom
+                    w: 1,
+                    h: 2,
+                    i: 'trend-'+ i,
+                });
+            }
         },
         openAddTermModal: function() {
             Swal.fire({
