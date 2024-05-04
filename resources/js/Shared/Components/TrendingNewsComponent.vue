@@ -16,7 +16,7 @@
             :use-css-transforms="false"
             :margin="[5,5]">
             <grid-item v-for="(item, index) in layout"
-                       :static="true"
+                       :static="false"
                        :ref="item.i"
                        :x="item.x"
                        :y="item.y"
@@ -84,13 +84,14 @@ export default {
             this.trends = res.data.trends;
             for(let i = 0; i < 6; i++) {
                 this.layout.push({
-                    x: (this.layout.length) % 3,
-                    y: (this.layout.length * 3) % 2, // puts it at the bottom
+                    x: (this.layout.length * 2) % 3,
+                    y: this.layout.length + 3, // puts it at the bottom
                     w: 1,
                     h: 2,
-                    i: 'trend-'+ i,
+                    i: 'trend-'+ i
                 });
             }
+            console.log(this.layout);
             this.loading = false;
         },
         openAddTermModal: function() {

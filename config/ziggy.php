@@ -1,7 +1,10 @@
 <?php
 
-    return [
-
-    ]
+return [
+    'except' => ['admin.*'],
+    'groups' => [
+        'admin' => ['admin.*', '*'],
+    ],
+];
 
 ?>
