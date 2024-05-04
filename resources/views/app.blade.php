@@ -21,7 +21,14 @@
         {{-- Main --}}
         <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.startsWith"></script>
 
-        @routes
+        @hasrole('Admin')
+            @routes('admin')
+        @endhasrole
+
+        @hasrole('Moderator')
+            @routes
+        @endhasrole
+
 
         @inertiaHead
     </head>
