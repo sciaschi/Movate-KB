@@ -36,6 +36,9 @@
                 </a>
             </grid-item>
         </grid-layout>
+        <div v-if="loading" class="overlay">
+            <span class="lds-dual-ring"></span>
+        </div>
     </component-layout>
 
 </template>
@@ -60,6 +63,7 @@ export default {
     data() {
        return {
            trends: null,
+           loading: false,
            layout: []
        }
     },
@@ -70,6 +74,7 @@ export default {
             }, 60000)
         },
         getTrends: async function() {
+            this.loading = true;
             let res = await axios.get(route('get_trends'), {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -86,12 +91,12 @@ export default {
                     i: 'trend-'+ i,
                 });
             }
+            this.loading = false;
         },
         openAddTermModal: function() {
             Swal.fire({
                 title: 'Add Trending News Article',
-                html:
-                    '<input type="text" id="url-val" class="form-control" placeholder="Enter Web address..." aria-label="Enter Web address...">',
+                html: '<input type="text" id="url-val" class="form-control" placeholder="Enter Web address..." aria-label="Enter Web address...">',
                 focusConfirm: false,
                 confirmButtonText: 'Save',
                 showCancelButton: true,
@@ -101,6 +106,8 @@ export default {
                         url: document.getElementById('url-val').value.toString(),
                     };
 
+                    this.loading = false;
+
                     axios.post(route('add_trend'), inputData, {
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
@@ -109,6 +116,7 @@ export default {
                         if(data.status)
                         {
                             Swal.fire('Saved!', '', 'success')
+                            this.loading = false;
                             this.getTrends();
                         }
                         return false

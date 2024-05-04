@@ -1,11 +1,18 @@
 <template>
     <div id="editPanel" class="row p-3">
         <div class="col-6 mt-2">
+            <label for="edit-term-val" class="form-label">Term </label>
             <input type="text" id="edit-term-val" class="edit-term-value form-control" placeholder="Term" :value="!adding ? term.term : ''">
         </div>
         <div class="col-6 mt-2">
             <label for="edit-class" class="form-label">Class <span id="edit-rangeval" class="fs-6 term-rating ml-5 text-white" :class="!adding ? 'class-'+ term.rating : 'class-1'">{{ !adding ? utils().convertRating(term.rating) : '1' }}</span></label>
             <input type="range" class="form-range" min="1" max="4" id="edit-class" :value="!adding ? term.rating : '1'">
+        </div>
+        <div class="col-6 mt-1 float-right">
+            <label for="edit-category" class="form-label">Category </label>
+            <select id="edit-category" class="form-select" v-model="termCategory">
+                <option v-for="category in categories" :value="category.id">{{category.name}}</option>
+            </select>
         </div>
         <div class="col-12 mt-2" style="height:100%;">
             <quill-editor ref="quillEditor" class="form-control" toolbar="full" :content="!adding ? term.description : ''" contentType="html"></quill-editor>
@@ -21,10 +28,10 @@
                 <table class="table-auto static-table">
                     <thead>
                         <tr>
-                            <th class="rounded-t-lg">
+                            <th>
                                 Source
                             </th>
-                            <th class="rounded-t-lg">
+                            <th>
                                 Actions
                             </th>
                         </tr>
@@ -42,19 +49,15 @@
                 </table>
             </div>
         </div>
-        <div class="col-6 mt-1 float-right">
-            <label for="edit-category" class="form-label">Category </label>
-            <select id="edit-category" v-model="termCategory">
-                <option v-for="category in categories" :value="category.id">{{category.name}}</option>
-            </select>
-        </div>
         <div class="col-12 mt-2">
-            <button id="save-term-edit-btn" type="button" class="btn bg-green-600 float-right" @click="!adding ? updateTerm() : addTerm()">
-                <i class="fa-regular fa-floppy-disk"></i> Save
-            </button>
-            <button id="cancel-edit-btn" type="button" class="btn bg-red-600 float-right" @click="!adding ? updateTerm() : addTerm()">
-                <i class="fa-regular fa-xmark-circle"></i> Cancel
-            </button>
+            <div class="input-group justify-end">
+                <button id="save-term-edit-btn" type="button" class="btn bg-green-700 mr-1 dark:text-gray-50 hover:bg-green-600" @click="!adding ? updateTerm() : addTerm()">
+                    <i class="fa-regular fa-floppy-disk"></i> Save
+                </button>
+                <button id="cancel-edit-btn" type="button" class="btn bg-red-700 dark:text-gray-50 hover:bg-red-600" @click="!adding ? updateTerm() : addTerm()">
+                    <i class="fa-regular fa-xmark-circle"></i> Cancel
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -146,8 +149,8 @@ export default {
     },
     mounted() {
         this.links = this.term ? [...this.term.links] : [];
-        console.log(this.term);
-        this.termCategory = this.term.categories.length > 0 ? this.term.categories[0].id : 0;
+        this.termCategory = this.term.categories && this.term.categories.length ? this.term.categories[0].id : 0;
+
         document.getElementById("edit-class").addEventListener('input', function() {
             var val = utils.convertRating($(this).val());
 
