@@ -34,11 +34,13 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-8 position-relative">
-                    <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400" style="height:88vh; overflow-y: auto; padding:10px;">
+                    <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400"
+                         style="height:88vh; overflow-y: auto; padding:10px;" :class="!adding && !selectedTerm ? 'flex items-center justify-center' : ''">
                         <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm" @loading="isLoading"  v-if="adding || selectedTerm"
                                     :adding="adding" :is="editing || adding ? 'term-edit' : 'term-details'"
                                     :term="selectedTerm" :categories="categories">
                         </component>
+                        <span v-else class="text-lg">Select a term from the search box for more details</span>
                     </div>
                     <div v-if="loading" class="overlay">
                         <span class="lds-dual-ring"></span>
@@ -67,6 +69,7 @@ export default {
     },
     props: {
         categories: Object,
+        routeTerm: Object,
     },
     data () {
         return {
@@ -77,8 +80,8 @@ export default {
             isSearchEmpty: true,
             searchCategories: [],
             searchTerms: [],
+            searchTrigger: null,
             selectedTerm: null,
-            searchTrigger: null
         }
     },
     methods: {
@@ -128,7 +131,7 @@ export default {
             }
 
             this.searchTerms = res.data['all']
-            this.loading = false;
+            this.searchLoading = false;
         },
         searchTerm: async function (text) {
             this.searchLoading = true;
@@ -156,15 +159,28 @@ export default {
             let termIndex = this.searchCategories[searchCatIndex].terms.findIndex(x => x.id === term.id)
             let searchTermIndex = this.searchTerms.findIndex(x => x.id === term.id);
 
-            let catIndex = this.searchCategories.findIndex(x => {
-                return x.id.toString() === term.category
-            })
+            if(term.category) {
+                let catIndex = this.searchCategories.findIndex(x => {
+                    return x.id.toString() === term.category
+                })
+
+                this.searchCategories[catIndex].terms.push(term)
+            }
+            else
+            {
+                let catIndex = this.searchCategories.findIndex(x => {
+                    return x.name === 'Uncategorized'
+                })
+
+                this.searchCategories[catIndex].terms.push(term)
+
+            }
 
             this.searchCategories[searchCatIndex].terms.splice(termIndex, 1);
-            this.searchCategories[catIndex].terms.push(term)
 
             this.searchTerms[searchTermIndex] = term
             this.selectedTerm = term;
+
             this.toggleEdit();
         },
         addNewTerm: function (newTerm) {
@@ -175,7 +191,11 @@ export default {
         }
     },
     mounted: async function() {
-        this.loading = true;
+        if(this.routeTerm) {
+            this.selectedTerm = this.routeTerm;
+        }
+
+        this.searchLoading = true;
         await this.getAllTerms();
         this.searchTrigger = new utils.rollingTrigger(this.searchTerm, 500);
     }
@@ -183,6 +203,9 @@ export default {
 </script>
 
 <style scoped>
+    #search_results {
+
+    }
     #term-details {
         overflow-x: hidden;
     }
@@ -195,64 +218,5 @@ export default {
         position:relative;
         height:88vh;
         overflow-y: auto
-    }
-    .overlay {
-        position: absolute;
-        display: flex; /* Hidden by default */
-        width: 100%; /* Full width (cover the whole page) */
-        height: 100%; /* Full height (cover the whole page) */
-        top:0;
-        left:0;
-        right:0;
-        bottom:0;
-        justify-content: center;
-        align-items: center;
-        background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-        z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-        cursor: pointer; /* Add a pointer on hover */
-    }
-    .overlay > i {
-        animation: rotation infinite 1s linear;
-    }
-    @keyframes rotation{
-        from{
-            transform:rotate(0deg);
-        }
-
-        to{
-            transform:rotate(360deg);
-        }
-    }
-    .lds-dual-ring {
-        /* change color here */
-        color: #6043a8
-    }
-    .lds-dual-ring,
-    .lds-dual-ring:after {
-        box-sizing: border-box;
-    }
-    .lds-dual-ring {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-    }
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 64px;
-        height: 64px;
-        margin: 8px;
-        border-radius: 50%;
-        border: 6.4px solid currentColor;
-        border-color: currentColor transparent currentColor transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-    }
-    @keyframes lds-dual-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
     }
 </style>

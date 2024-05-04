@@ -396,3 +396,64 @@ table.rounded {
     --bs-btn-disabled-bg: #198754;
     --bs-btn-disabled-border-color: #198754;
 }
+
+.overlay {
+    position: absolute;
+    display: flex; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+}
+.overlay > i {
+    animation: rotation infinite 1s linear;
+}
+@keyframes rotation{
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+}
+.lds-dual-ring {
+    /* change color here */
+    color: #6043a8
+}
+.lds-dual-ring,
+.lds-dual-ring:after {
+    box-sizing: border-box;
+}
+.lds-dual-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6.4px solid currentColor;
+    border-color: currentColor transparent currentColor transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

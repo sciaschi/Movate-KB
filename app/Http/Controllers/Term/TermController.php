@@ -55,10 +55,11 @@ class TermController extends Controller
      * Index Page
      * @return Response
      */
-    public function index() {
+    public function index($term = null) {
         return Inertia::render('SearchTerms/Index', [
             'can-add-term' => Auth::user()->can('add-term'),
-            'categories'   => TermCategory::all()->toArray()
+            'categories'   => TermCategory::all()->toArray(),
+            'routeTerm'    => $term ? Term::firstWhere('term', $term) : null
         ]);
     }
 
@@ -155,7 +156,7 @@ class TermController extends Controller
         $validated = Validator::make($data, [
             'term'          => 'required|string',
             'rating'        => 'required|integer',
-            'category'      => 'integer',
+            'category'      => 'integer|string',
             'description'   => 'required|string'
         ]);
 
@@ -174,7 +175,9 @@ class TermController extends Controller
         $termObj->rating        = $data['rating'];
         $termObj->description   = $data['description'];
 
-        $termObj->categories()->sync([$data['category']]);
+        if($data['category']) {
+            $termObj->categories()->sync([$data['category']]);
+        }
 
         $links = [];
 
