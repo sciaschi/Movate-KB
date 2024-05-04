@@ -32,7 +32,7 @@ class AdminUsersController extends Controller
 
         $mappedData = $data->map(function($e){
             return [
-                'id'             => $e->hashId,
+                'id'             => $e->id,
                 'name'           => $e->name,
                 'email'          => $e->email,
                 'accuracy_score' => $e->accuracy_scores ? (string)$e->accuracy_scores->first()->accuracy_grade : 'N/A',
@@ -49,7 +49,7 @@ class AdminUsersController extends Controller
     public function getAllUsers() {
         $data = User::with('roles')->get()->map(function($e){
             return [
-                'id'             => $e->hashId,
+                'id'             => $e->id,
                 'name'           => $e->name,
                 'email'          => $e->email,
                 'role'           => $e->roles->first()->name,
