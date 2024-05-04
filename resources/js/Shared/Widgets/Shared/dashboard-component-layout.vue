@@ -20,7 +20,7 @@ export default {
                 {{ header }} <slot name="header-actions"></slot>
             </h2>
         </div>
-        <div id="component-container">
+        <div class="component-container">
             <slot></slot>
         </div>
     </div>

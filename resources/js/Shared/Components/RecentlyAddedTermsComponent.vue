@@ -50,8 +50,6 @@ export default {
             if(res.status) {
                 this.terms = res.data.terms;
                 this.loading = false;
-
-                this.setBindings();
             }
         },
         goToTerm: function(term) {
@@ -66,7 +64,9 @@ export default {
                 };
             })
         },
-        tableMounted: function() {}
+        tableMounted: function() {
+            this.setBindings();
+        }
     },
     beforeMount() {
         this.columns = [
