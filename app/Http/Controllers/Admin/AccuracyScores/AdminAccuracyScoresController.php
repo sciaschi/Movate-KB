@@ -8,7 +8,6 @@ use App\Models\Term\Term;
 use App\Models\User\User;
 use App\Models\UserAccuracyScore\UserAccuracyScore;
 use Carbon\Carbon;
-use Deligoez\LaravelModelHashId\Exceptions\UnknownHashIdConfigParameterException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -29,18 +28,17 @@ class AdminAccuracyScoresController extends Controller
      */
     public function historical($id) {
         return Inertia::render('Admin/AccuracyScores/Historical', [
-            'user' => User::whereHashId($id)->first(['name'])->name
+            'user' => User::find($id)->name
         ]);
     }
 
     /**
      * @return JsonResponse
-     * @throws UnknownHashIdConfigParameterException
      */
     public function getHistoricalData(Request $request) {
         $data = $request->all();
         $scores = AccuracyScore::whereDate('created_at', '=', $data['filter_date'])->with('user_accuracy_scores')
-            ->where('user_id', User::keyFromHashId($data['user_id']))->get();
+            ->where('user_id', $data['user_id'])->get();
 
         $mappedScores = $scores->map(function($e) {
             return [
@@ -75,7 +73,7 @@ class AdminAccuracyScoresController extends Controller
      */
     public function grade(Request $request, $id = null) {
         return Inertia::render('Admin/AccuracyScores/Grade', [
-            'gradingUser' => $id ?? User::whereHashId($id)->get(['id', 'name'])
+            'gradingUser' => $id ?? User::find($id)->get(['id', 'name'])
         ]);
     }
 

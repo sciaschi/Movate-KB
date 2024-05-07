@@ -11,7 +11,7 @@ import PrimaryButton from "./primary-button.vue";
 import TextInput from "./text-input.vue";
 import { useCookies } from "vue3-cookies"
 export default {
-    name: "counter",
+    name: "page-counter",
     components: {TextInput, PrimaryButton},
     data: () => ({
         pageCount: 0
