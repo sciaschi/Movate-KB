@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Trend\Traits\Attribute;
 use App\Models\Trend\Traits\Relationship;
+use Illuminate\Support\Facades\DB;
 
 class Trend extends Model
 {
@@ -66,4 +67,21 @@ class Trend extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    public static function getRecentTrends($count = 6) {
+        return static::orderBy('created_at', 'desc')->limit($count)->get()->map(fn($trend) => $trend->format());
+    }
+
+    public function format() {
+        return [
+            'title' => $this->title,
+            'url'   => $this->url,
+            'image' => $this->image
+        ];
+    }
+
+    public static function removeOldTrends() {
+        $removeId = static::select(['id'])->orderByDesc('id')->limit(6)->min('id');
+        static::where('id', '<=', $removeId)->delete();
+    }
 }

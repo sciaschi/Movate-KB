@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Term;
 
+use App\Events\UpsertTermEvent;
 use App\Models\Term\TermCategory;
-use Auth;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Term\Term;
 use App\Models\TermLink\TermLink;
 use App\Http\Controllers\Controller as Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,13 +24,13 @@ class TermController extends Controller
      * Meilisearch Client
      * @var Client
      */
-    private Client $client;
+    protected Client $client;
 
     /**
      * Terms Collection
      * @var Collection
      */
-    private Collection $terms;
+    protected Collection $terms;
 
     /**
      *  TermController Constructor
@@ -65,10 +67,10 @@ class TermController extends Controller
 
     /**
      * Get All Terms
-     * @return Term[]
+     * @return Collection
      */
     public function getAllTerms() {
-        return Term::with('links')->orderBy('term', 'asc')->get();
+        return Term::with(['categories','links'])->orderBy('term')->get();
     }
 
     /**
@@ -77,6 +79,37 @@ class TermController extends Controller
      */
     public function getTermLinksById($id) {
         return TermLink::where('term_id', '=', $id)->get();
+    }
+
+
+    public function getAllTermCategories() {
+        $terms    = Term::with('links')->orderBy('term', 'asc')->get();
+        $cats     = TermCategory::with(['terms.categories', 'terms.links'])->orderBy('name')->get();
+        $ids      = $cats->pluck('terms')->flatten()->pluck('id')->toArray();
+
+        return [
+            'all'           => $terms,
+            'categories'    => $cats,
+            'uncategorized' => $terms->whereNotIn('id', $ids)->all()
+        ];
+    }
+
+    /**
+     * Get Recently Added Trends Sorted by created_at desc
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getRecentlyAddedTerms(Request $request)
+    {
+        $data   = $request->all();
+        $count = $data['count'] ?? 13;
+        $terms = Cache::remember('terms:get-recent-terms', 30, fn() => Term::orderBy('updated_at', 'desc')->limit($count)->get()->toArray());
+
+        return response()->json([
+            'status' => true,
+            'terms' => $terms
+        ]);
     }
 
     /**
@@ -104,11 +137,12 @@ class TermController extends Controller
             ], 500);
         }
 
-        $termObj = new Term();
+        $termObj = new Term([
+            'term'        => $data['term'],
+            'rating'      => $data['rating'],
+            'description' => $data['description']
+        ]);
 
-        $termObj->term        = $data['term'];
-        $termObj->rating      = $data['rating'];
-        $termObj->description = $data['description'];
         $termObj->categories()->sync([$data['category']]);
 
         $links = [];
@@ -130,6 +164,8 @@ class TermController extends Controller
 
         if($res = $termObj->save())
         {
+            event(new UpsertTermEvent($this->terms->take(12)->sortBy('updated_at', SORT_DESC)->toArray()));
+
             return response()->json([
                 "status"    => true,
                 "data"      => $termObj
@@ -193,12 +229,8 @@ class TermController extends Controller
 
             $links = collect($links);
 
-            $termLinks  = $termObj->links()->get()->map(function($val) {
-                return [
-                    'id' => $val->id,
-                    'link_url' => $val->link_url,
-                    'term_id' => $val->term_id,
-                ];
+            $termLinks  = $termObj->links()->get()->map(function(TermLink $val) {
+                return $val->format();
             });
 
             $addLinks = $links->whereNotIn('id', $termLinks->pluck('id'));
@@ -220,42 +252,14 @@ class TermController extends Controller
         $termObj->refresh();
         $termObj['category'] = $data['category'];
 
+        event(new UpsertTermEvent());
+
         return response()->json([
             "status"    => true,
             "data"      => $termObj
         ]);
     }
 
-    public function getAllTermCategories() {
-        $cats = TermCategory::with(['terms.categories', 'terms.links'])->orderBy('name')->get();
-        $allTerms = Term::with(['categories', 'links'])->orderBy('term')->get();
-
-        $ids = $cats->pluck('terms')->flatten()->pluck('id')->toArray();
-
-        return [
-            'all'           => $allTerms,
-            'categories'    => $cats,
-            'uncategorized' => $allTerms->whereNotIn('id', $ids)->all()
-        ];
-    }
-
-    /**
-     * Get Recently Added Trends Sorted by created_at desc
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getRecentlyAddedTerms(Request $request)
-    {
-        $data   = $request->all();
-        $count = $data['count'] ?? 12;
-        $terms = Term::orderBy('created_at', 'desc')->limit($count)->get();
-
-        return response()->json([
-            'status' => true,
-            'terms' => collect($terms)
-        ]);
-    }
 
     /**
      * Get Recently Added Trends Sorted by created_at desc

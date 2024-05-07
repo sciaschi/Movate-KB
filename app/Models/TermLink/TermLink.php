@@ -56,4 +56,16 @@ class TermLink extends Model
      * @var array<int, string>
      */
     protected $hidden = [];
+
+    /**
+     * Format Links
+     * @return array
+     */
+    public function format() {
+        return [
+            'id'       => isset($this->id) ? intval($this->id) : 0,
+            'link_url' => strip_tags($this->link_url),
+            'term_id'  => intval($data['id']) ?? $this['id']
+        ];
+    }
 }

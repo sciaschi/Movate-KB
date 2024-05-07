@@ -17,16 +17,32 @@ export default {
     components: {
         ComponentLayout
     },
+    data() {
+        return {
+            icon: null,
+            pollingLoop: null,
+            modsPerDay: 0
+        }
+    },
     methods: {
-        getModsPerHour: async function() {
-            console.log(this.$root.$refs.counter);
+        getModsPerDay: function() {
+            if(this.cookies.get('cur-time') >= this.cookies.get('start-time')) {
+                let modsPerDay  = this.cookies.get('page-count') * 12 / 8;
 
-            if(this.cookies.get('page-count')) {
-                let res = await axios.get(route('mods-per-hour'), {
-                    moderations: this.cookies.get('page-count')
-                })
-                console.log(moment().hour());
+                if(modsPerDay > this.modsPerDay) {
+                    this.icon = 'fa-caret-up text-green-800'
+                } else if(modsPerDay < this.modsPerDay) {
+                    this.icon = 'fa-caret-down text-red-800'
+                } else {
+                    this.icon = 'fa-minus'
+                }
+
+                this.modsPerDay = modsPerDay
+            } else {
+                this.modsPerDay = 0
             }
+
+            this.cookies.set('cur-time', moment().utc().format())
         }
     },
     setup () {
@@ -34,10 +50,18 @@ export default {
         return { cookies };
     },
     mounted() {
-        this.getModsPerHour();
+        this.pollingLoop = setInterval(this.getModsPerDay, 10000);
+
+        let modsCount   = this.cookies.get('page-count') * 12;
+
+        if(moment().utc().hour() >= this.cookies.get('start-time')) {
+            this.modsPerDay = modsCount / 8
+        } else {
+            this.modsPerDay = 0
+        }
     },
-    updated() {
-        this.getModsPerHour();
+    beforeUnmount() {
+        clearInterval(this.pollingLoop);
     }
 }
 </script>

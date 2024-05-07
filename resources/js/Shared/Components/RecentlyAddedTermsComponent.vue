@@ -1,5 +1,5 @@
 <template>
-    <component-layout header="Recently Added Terms">
+    <component-layout header="Recent Terms">
         <div id="recent-terms-container" class="p-2">
             <fx-table @vue:updated="tableMounted" :columns="columns" :data="terms"></fx-table>
             <div v-if="loading" class="overlay">
