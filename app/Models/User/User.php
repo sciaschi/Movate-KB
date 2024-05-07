@@ -51,10 +51,10 @@ class User extends Authenticatable
     public function actions() {
         return [
             'delete' => route('admin.users.delete', [
-                'id' => $this->hashId
+                'id' => $this->id
             ]),
             'edit'   => route('admin.users.edit', [
-                'id' => $this->hashId
+                'id' => $this->id
             ]),
         ];
     }
