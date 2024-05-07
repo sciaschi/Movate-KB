@@ -148,7 +148,7 @@ export default {
         }
     },
     mounted() {
-        this.links = this.term ? [...this.term.links] : [];
+        this.links = this.term && this.term.links ? [...this.term.links] : [];
         this.termCategory = this.term.categories && this.term.categories.length ? this.term.categories[0].id : 0;
 
         document.getElementById("edit-class").addEventListener('input', function() {

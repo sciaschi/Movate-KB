@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Trend\Trend;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -9,19 +10,20 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 
 class TrendsUpdatedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public array $trends;
+    public Collection $trends;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(array $trends)
+    public function __construct()
     {
-        $this->trends = $trends;
+        $this->trends = Trend::getRecentTrends();
     }
 
     /**

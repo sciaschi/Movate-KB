@@ -15,14 +15,14 @@ class UpsertTermEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public array $terms;
+    public Collection $terms;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(array $terms)
+    public function __construct($count = 13)
     {
-        $this->terms = $terms;
+        $this->terms = Term::getTrendingNews($count);
     }
 
     /**

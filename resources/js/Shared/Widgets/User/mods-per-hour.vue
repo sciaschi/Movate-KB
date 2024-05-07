@@ -1,14 +1,16 @@
 <template>
     <component-layout header="Mods Per Hour">
         <div id="mods-per-hour">
-            <span id="num-per-hr" class="per-none">0</span>
+            <span id="num-per-hr" class="per-none">
+                {{ modsPerHour > 0 ? modsPerHour : 0 }}
+<!--                <i class="fa-solid" :class="this.icon"></i>-->
+            </span>
         </div>
     </component-layout>
 </template>
 
 <script>
 import ComponentLayout from "../../../Shared/Widgets/Shared/dashboard-component-layout.vue";
-import route from "ziggy-js";
 import { useCookies } from "vue3-cookies"
 import moment from "moment";
 
@@ -17,16 +19,33 @@ export default {
     components: {
         ComponentLayout
     },
+    data() {
+        return {
+            icon: null,
+            pollingLoop: null,
+            modsPerHour: 0
+        }
+    },
     methods: {
-        getModsPerHour: async function() {
-            console.log(this.$root.$refs.counter);
+        getModsPerHour: function() {
+            let hoursWorked = moment(this.cookies.get('cur-time')).diff(this.cookies.get('start-time'), 'hours') - 1,
+                modsPerHour = this.cookies.get('page-count') * 12 / hoursWorked;
 
-            if(this.cookies.get('page-count')) {
-                let res = await axios.post(route('mods-per-hour'), {
-                    moderations: this.cookies.get('page-count')
-                })
-                console.log(moment().hour());
+            if(hoursWorked > 0 && hoursWorked <= 8) {
+                if(modsPerHour > this.modsPerHour) {
+                    this.icon = 'fa-caret-up text-green-800'
+                } else if(modsPerHour < this.modsPerHour) {
+                    this.icon = 'fa-caret-down text-red-800'
+                } else {
+                    this.icon = 'fa-minus'
+                }
+
+                this.modsPerHour = modsPerHour.toFixed(2);
+            } else {
+                this.modsPerHour = 0
             }
+
+            this.cookies.set('cur-time', moment().utc().format())
         }
     },
     setup () {
@@ -34,10 +53,19 @@ export default {
         return { cookies };
     },
     mounted() {
-        this.getModsPerHour();
+        this.pollingLoop = setInterval(this.getModsPerHour, 10000);
+        let hoursWorked = moment(this.cookies.get('cur-time')).diff(this.cookies.get('start-time'), 'hours') - 1;
+
+        if(hoursWorked > 0 && hoursWorked <= 8) {
+            let modsCount   = this.cookies.get('page-count') * 12;
+
+            this.modsPerHour = (modsCount / hoursWorked).toFixed(2)
+        } else {
+            this.modsPerHour = 0
+        }
     },
-    updated() {
-        this.getModsPerHour();
+    beforeUnmount() {
+        clearInterval(this.pollingLoop);
     }
 }
 </script>

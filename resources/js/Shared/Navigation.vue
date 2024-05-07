@@ -149,7 +149,7 @@ import DropdownLink from "./Widgets/dropdown-link";
 import { Link } from "@inertiajs/inertia-vue3";
 import { ref } from "vue";
 import ResponsiveNavLink from "./Widgets/responsive-nav-link";
-import PageCounter from "./Widgets/counter.vue";
+import PageCounter from "./Widgets/page-counter.vue";
 
 export default {
     components: {
