@@ -68,24 +68,22 @@ export default {
        }
     },
     methods: {
-        pollData () {
-            this.polling = setInterval(async () => {
-                await this.getTrends();
-            }, 60000)
-        },
         getTrends: async function() {
             this.loading = true;
+
             let res = await axios.get(route('get_trends'), {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                 }
             });
+
             this.layout = [];
-            this.trends = res.data.trends;
-            for(let i = 0; i < 6; i++) {
+            this.trends = res.data.trends ?? [];
+
+            for(let i = 0; i < this.trends.length; i++) {
                 this.layout.push({
-                    x: (this.layout.length * 2) % 3,
-                    y: this.layout.length + 3, // puts it at the bottom
+                    x: this.layout.length % 3,
+                    y: this.layout.length * 2, // puts it at the bottom
                     w: 1,
                     h: 2,
                     i: 'trend-'+ i
@@ -106,19 +104,22 @@ export default {
                     var inputData = {
                         url: document.getElementById('url-val').value.toString(),
                     };
-
-                    this.loading = false;
+                    let savingToast = this.$toast.info('Saving Trend - Please Wait...', {
+                        duration: 0
+                    });
 
                     axios.post(route('add_trend'), inputData, {
                         headers: {
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         }
                     }).then((data) => {
+                        savingToast.dismiss();
+
                         if(data.status)
                         {
-                            Swal.fire('Saved!', '', 'success')
-                            this.loading = false;
-                            this.getTrends();
+                            this.$toast.success('Trend Saved!', {
+                                duration: 5000
+                            });
                         }
                         return false
                     })
@@ -133,12 +134,26 @@ export default {
             });
         }
     },
-    mounted: async function() {
+    beforeMount: async function() {
         await this.getTrends();
-        this.pollData();
-    },
-    beforeUnmount: function () {
-        clearInterval(this.polling)
+
+        var channel = Echo.channel('TrendsUpdated');
+
+        channel.listen('TrendsUpdatedEvent', (e) => {
+            this.layout = [];
+            this.trends = e.trends;
+
+            for(let i = 0; i < this.trends.length; i++) {
+                this.layout.push({
+                    x: this.layout.length % 3,
+                    y: this.layout.length * 3, // puts it at the bottom
+                    w: 1,
+                    h: 2,
+                    i: 'trend-'+ i
+                });
+            }
+        })
+
     }
 }
 </script>

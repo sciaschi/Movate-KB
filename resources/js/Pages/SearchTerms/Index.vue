@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-8 position-relative">
-                    <div id="term-details" class="bg-light shadow-sm sm:rounded-lg w-100 dark:bg-slate-700 dark:text-slate-400"
+                    <div id="term-details" class="bg-light dark:bg-slate-700 shadow-sm sm:rounded-lg w-100 dark:text-slate-400"
                          style="height:88vh; overflow-y: auto; padding:10px;" :class="!adding && !selectedTerm ? 'flex items-center justify-center' : ''">
                         <component @addNewTerm="addNewTerm"  @updateEditTerm="updateEditTerm" @loading="isLoading"  v-if="adding || selectedTerm"
                                     :adding="adding" :is="editing || adding ? 'term-edit' : 'term-details'"
@@ -130,7 +130,12 @@ export default {
                 })
             }
 
-            this.searchTerms = res.data['all']
+            this.searchTerms = res.data['all'];
+
+            this.searchCategories.forEach(function(cat) {
+                cat.terms.sort((a,b) => a.term.localeCompare(b.term))
+            })
+
             this.searchLoading = false;
         },
         searchTerm: async function (text) {
@@ -178,6 +183,10 @@ export default {
 
             this.searchCategories[searchCatIndex].terms.splice(termIndex, 1);
 
+            this.searchCategories.forEach(function(cat) {
+                cat.terms.sort((a,b) => a.term.localeCompare(b.term))
+            })
+
             this.searchTerms[searchTermIndex] = term
             this.selectedTerm = term;
 
@@ -190,13 +199,13 @@ export default {
             this.adding = false;
         }
     },
-    mounted: async function() {
+    beforeMount: function() {
         if(this.routeTerm) {
             this.selectedTerm = this.routeTerm;
         }
 
         this.searchLoading = true;
-        await this.getAllTerms();
+        this.getAllTerms();
         this.searchTrigger = new utils.rollingTrigger(this.searchTerm, 500);
     }
 }

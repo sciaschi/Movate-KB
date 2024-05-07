@@ -97,4 +97,8 @@ class Term extends BaseModel
             'rating' => $this->rating
         ];
     }
+
+    public static function getTrendingNews($count = 13) {
+        return static::orderBy('updated_at', 'desc')->limit($count)->get();
+    }
 }
