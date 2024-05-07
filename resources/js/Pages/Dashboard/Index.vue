@@ -56,10 +56,8 @@ export default {
             layout: [
                 {"x":0,"y":0,"w":1,"h":1,"i":"mph", "c": 'ModsPerHour'},
                 {"x":1,"y":0,"w":1,"h":1,"i":"mpd", "c": 'ModsPerDay'},
-                // {"x":2,"y":0,"w":1,"h":1,"i":"2", "c": 'ModsPerHour'},
-                // {"x":3,"y":0,"w":1,"h":1,"i":"3", "c": 'ModsPerHour'},
-                {"x":0,"y":1,"w":2,"h":3.2,"i":"tnc", "c": 'TrendingNewsComponent', "props": {canAddTrend: this.canAddTrend}}, // component name used but you could also use a reference to the component
-                {"x":2,"y":1,"w":2,"h":4,"i":"ratc", "c": 'RecentlyAddedTermsComponent'}
+                {"x":0,"y":1,"w":2,"h":3.2,"i":"tnc", "c": 'TrendingNewsComponent', "props": {canAddTrend: this.canAddTrend}},
+                {"x":2,"y":1,"w":2,"h":4.2,"i":"ratc", "c": 'RecentlyAddedTermsComponent'}
             ]
         }
     },
