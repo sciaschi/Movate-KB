@@ -12,6 +12,10 @@ import route from 'ziggy-js'
 import { Ziggy } from './ziggy';
 import {InertiaProgress} from '@inertiajs/progress';
 import AdminLayout from "./Shared/Admin/AdminLayout";
+import ToastPlugin from 'vue-toast-notification';
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 /**
  * Next, we will create a fresh Vue application instance. You may then begin
@@ -43,6 +47,9 @@ createInertiaApp({
         })
         .use(ZiggyVue)
         .use(router)
+        .use(ToastPlugin, {
+            position: 'top-right'
+        })
 
         mainApp.config.globalProperties.$route = route
 

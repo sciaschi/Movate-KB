@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         getModsPerHour: function() {
-            let hoursWorked = moment(this.cookies.get('cur-time')).diff(this.cookies.get('start-time'), 'hours') - 1,
+            let hoursWorked = moment(this.cookies.get('cur-time')).diff(this.cookies.get('start-time'), 'hours'),
                 modsPerHour = this.cookies.get('page-count') * 12 / hoursWorked;
 
             if(hoursWorked > 0 && hoursWorked <= 8) {
