@@ -33,11 +33,6 @@ export default {
         moment: function () {
             return moment;
         },
-        pollData() {
-            this.polling = setInterval(async () => {
-                await this.getTerms();
-            }, 60000)
-        },
         getTerms: async function() {
             this.loading = true;
 
@@ -47,8 +42,8 @@ export default {
                 }
             });
 
-            if(res.status) {
-                this.terms = res.data.terms;
+            if(res.data.status) {
+                this.terms = Object.keys(res.data.terms).map((k) => res.data.terms[k]);
                 this.loading = false;
             }
         },
@@ -68,7 +63,7 @@ export default {
             this.setBindings();
         }
     },
-    beforeMount() {
+    async beforeMount() {
         this.columns = [
             {
                 id: 'term',
@@ -85,34 +80,13 @@ export default {
                 },
             }
         ];
-    },
-    beforeUnmount () {
-        clearInterval(this.polling)
-    },
-    created () {
-        this.pollData();
-    },
-    async mounted() {
+
         await this.getTerms();
-    },
-    updated() {
-        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]'),
-              existingPopover    = document.querySelector('.popover');
 
-        if(existingPopover)
-        {
-            existingPopover.remove();
-        }
-
-        for(var i = 0; i < popoverTriggerList.length; i++) {
-            var el = popoverTriggerList[i];
-
-            new bootstrap.Popover(el, {
-                html: true,
-                trigger: 'hover focus',
-                delay: 1000
-            });
-        }
+        var channel = Echo.channel('recent-terms');
+        channel.listen('UpsertTermEvent', (e) => {
+            this.terms = e.terms;
+        })
     }
 }
 </script>
