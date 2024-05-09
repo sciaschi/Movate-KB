@@ -83,7 +83,7 @@ class TermController extends Controller
 
 
     public function getAllTermCategories() {
-        $terms    = Term::with('links')->orderBy('term', 'asc')->get();
+        $terms    = Cache::remember('terms-with-links', 10, fn() => Term::with('links')->orderBy('term', 'asc')->get());
         $cats     = TermCategory::with(['terms.categories', 'terms.links'])->orderBy('name')->get();
         $ids      = $cats->pluck('terms')->flatten()->pluck('id')->toArray();
 
@@ -331,6 +331,7 @@ class TermController extends Controller
 
             $termObj->links()->saveMany($links);
         }
+
         return response()->json([
             "status"    => true,
             "data"      => $termObj

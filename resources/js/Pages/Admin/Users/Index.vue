@@ -2,11 +2,12 @@
     <header>
         <span class="header-text">Users</span>
     </header>
-    <div class="header-content">
-        <button type="button" @click="createNewUser" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New</button>
-    </div>
     <div class="container table-container">
-        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users')" :columns="columns"></fx-table>
+        <fx-table @vue:updated="tableMounted" class="users-table" :ajax="route('admin.users.get-users')" :columns="columns">
+            <template #actions>
+                <success-button @click="createNewUser"><i class="fa-solid fa-plus"></i> Add New</success-button>
+            </template>
+        </fx-table>
     </div>
 </template>
 
@@ -15,11 +16,13 @@ import AdminLayout from "../../../Shared/Admin/AdminLayout";
 import {Inertia} from "@inertiajs/inertia";
 import route from "ziggy-js";
 import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
+import SuccessButton from "../../../Shared/Widgets/success-button.vue";
 
 export default {
     name: "Index",
     layout: AdminLayout,
     components: {
+        SuccessButton,
         FxTable
     },
     data() {

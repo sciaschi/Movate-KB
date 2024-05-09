@@ -32,7 +32,7 @@ createInertiaApp({
         }
         else
         {
-            page.layout = page.layout || Layout
+            page.layout = page.layout ?? Layout
         }
         return page
     },

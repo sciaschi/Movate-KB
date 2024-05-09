@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import * as Papa from 'papaparse';
+import Papa from 'papaparse';
 import createButton from "@jsAssets/Shared/Widgets/create-button.vue";
 import route from "ziggy-js";
 
@@ -59,7 +59,8 @@ export default {
     },
     methods: {
         parseCSV: function (e) {
-            Papa.parse(e.target.files[0],{
+            Papa.parse(e.target.files[0], {
+                skipEmptyLines: true,
                 complete: (res) => {
                     console.log('res.data', res.data);
                     this.data = res.data.map(function (x) {
@@ -68,7 +69,7 @@ export default {
                             'flagged': x[1] == 'Moderator Approved Unselected',
                         }
                     });
-                    this.data.splice(this.data.length - 2, 1)
+                    this.data.splice(this.data.length, 1)
                 }
             });
         },

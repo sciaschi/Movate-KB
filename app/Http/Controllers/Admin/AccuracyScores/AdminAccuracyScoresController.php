@@ -4,15 +4,14 @@ namespace App\Http\Controllers\Admin\AccuracyScores;
 
 use App\Http\Controllers\Controller;
 use App\Models\AccuracyScore\AccuracyScore;
-use App\Models\Term\Term;
 use App\Models\User\User;
 use App\Models\UserAccuracyScore\UserAccuracyScore;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
-use Validator;
 
 class AdminAccuracyScoresController extends Controller
 {
@@ -28,7 +27,7 @@ class AdminAccuracyScoresController extends Controller
      */
     public function historical($id) {
         return Inertia::render('Admin/AccuracyScores/Historical', [
-            'user' => User::find($id)->name
+            'user' => User::find($id)->name ?? null
         ]);
     }
 
@@ -67,13 +66,12 @@ class AdminAccuracyScoresController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param null $id
+     * @param int|null $id
      * @return Response
      */
-    public function grade(Request $request, $id = null) {
+    public function grade(int $id = null) {
         return Inertia::render('Admin/AccuracyScores/Grade', [
-            'gradingUser' => $id ?? User::find($id)->get(['id', 'name'])
+            'gradingUser' => $id ? User::find($id)->get(['id', 'name']) : null
         ]);
     }
 
@@ -84,9 +82,10 @@ class AdminAccuracyScoresController extends Controller
     public function createAccuracyScore(Request $request) {
         $data = $request->all();
 
-        $addData = collect(array_filter($data['data']))->map(function($el) use ($data) {
-            if($el['username'] == null) {
 
+        $addData = collect(array_filter($data['data']))->map(function($el) use ($data) {
+            if($el['username'] === null) {
+                return null;
             }
 
             return [

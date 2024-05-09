@@ -19,9 +19,15 @@
             </div>
         </div>
         <div class="col-12">
-            <fx-table :columns='[{id: "link_url", name: "Sources", render: function(el) {
-                return "<a href=" + el.link_url + " target=\"_blank\">"+ el.link_url +"</a>"
-            }}]' :data="this.term.links"></fx-table>
+            <fx-table :columns='[
+                {
+                    id: "link_url",
+                    name: "Sources",
+                    render: function(el) {
+                        return "<a href=" + el.link_url + " target=\"_blank\">"+ el.link_url +"</a>"
+                    }
+                }
+            ]' :data="this.term.links"></fx-table>
         </div>
     </div>
 </template>
@@ -45,8 +51,6 @@ export default {
         utils: function() {
             return utils
         }
-    },
-    mounted() {
     }
 }
 </script>
