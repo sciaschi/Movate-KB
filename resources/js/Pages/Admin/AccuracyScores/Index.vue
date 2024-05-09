@@ -37,8 +37,8 @@ export default {
         viewHistoricalData: function(id) {
             Inertia.visit(route('admin.accuracy-history', {id: id}));
         },
-        addNewAccuracyData: function() {
-            Inertia.visit(route('admin.grade-accuracy-no-id'));
+        addNewAccuracyData: function(id) {
+            Inertia.visit(route('admin.grade-accuracy'));
         },
         tableMounted: function () {
             document.querySelectorAll('.users-table tbody button.vhd').forEach((e) => {

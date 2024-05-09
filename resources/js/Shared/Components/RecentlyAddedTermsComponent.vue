@@ -25,7 +25,7 @@ export default {
     data () {
         return {
             columns: [],
-            terms: null,
+            terms: [],
             loading: true
         }
     },
@@ -53,9 +53,9 @@ export default {
         setBindings: function() {
             let context = this;
 
-            document.querySelectorAll('.term-link').forEach(function(link) {
-                link.onclick = (el) => {
-                    context.goToTerm(link.dataset.term)
+            document.querySelectorAll('.term-link').forEach((link) => {
+                link.onclick = () => {
+                    this.goToTerm(link.dataset.term)
                 };
             })
         },
@@ -85,6 +85,7 @@ export default {
 
         var channel = Echo.channel('recent-terms');
         channel.listen('UpsertTermEvent', (e) => {
+            console.log(e);
             this.terms = e.terms;
         })
     }
