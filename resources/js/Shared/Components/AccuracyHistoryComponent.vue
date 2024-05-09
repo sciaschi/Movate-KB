@@ -53,12 +53,10 @@ export default {
         }
     },
     mounted: function () {
-        var context = this;
-
         this.datePicker = jQuery( "#datepicker" ).datepicker();
 
-        this.datePicker.on('change', function(e) {
-            context.getHistoricalData(e.target.value);
+        this.datePicker.on('change', (e) => {
+            this.getHistoricalData(e.target.value);
         });
 
         this.table = new DataTable('.history-table', {

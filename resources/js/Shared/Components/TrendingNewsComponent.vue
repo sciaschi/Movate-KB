@@ -89,7 +89,6 @@ export default {
                     i: 'trend-'+ i
                 });
             }
-            console.log(this.layout);
             this.loading = false;
         },
         openAddTermModal: function() {

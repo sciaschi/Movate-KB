@@ -10,6 +10,7 @@
 import PrimaryButton from "./primary-button.vue";
 import TextInput from "./text-input.vue";
 import { useCookies } from "vue3-cookies"
+import moment from "moment";
 export default {
     name: "page-counter",
     components: {TextInput, PrimaryButton},
@@ -21,9 +22,13 @@ export default {
         return { cookies };
     },
     mounted() {
-        if(!this.cookies.get('page-count'))
-        {
-            this.cookies.set('page-count', this.pageCount, 1);
+        if(!this.cookies.get('start-time')) {
+            this.cookies.set('start-time', moment("1:00 PM EST", 'H:m A Z').utc().format(), moment().local().endOf('day').toDate())
+            this.cookies.set('end-time', moment("10:00 PM EST", 'H:m A Z').utc().format(), moment().local().endOf('day').toDate())
+        }
+
+        if(!this.cookies.get('page-count')) {
+            this.cookies.set('page-count', this.pageCount, moment().local().endOf('day').toDate());
         }
 
         this.pageCount = this.cookies.get('page-count')

@@ -2,18 +2,16 @@
 
 namespace App\Models\Term;
 
-use App\Models\BaseModel;
 use Database\Factories\TermFactory;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Term\Traits\Attribute as TermAttribute;
 use App\Models\Term\Traits\Relationship;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Attributes\SearchUsingPrefix;
 use Laravel\Scout\Searchable;
 
-
-class Term extends BaseModel
+class Term extends Model
 {
     use HasFactory, TermAttribute, Relationship, Searchable;
 
@@ -93,8 +91,7 @@ class Term extends BaseModel
     public function toSearchableArray()
     {
         return [
-            'term' => $this->term,
-            'rating' => $this->rating
+            'term' => $this->term
         ];
     }
 
