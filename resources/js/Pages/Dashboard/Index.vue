@@ -33,6 +33,7 @@ import { Head } from '@inertiajs/inertia-vue3'
 import TrendingNewsComponent from "@jsAssets/Shared/Components/TrendingNewsComponent";
 import RecentlyAddedTermsComponent from "@jsAssets/Shared/Components/RecentlyAddedTermsComponent";
 import ModsPerHour from "@jsAssets/Shared/Widgets/User/mods-per-hour.vue";
+import UserAccuracyScoreComponent from "@jsAssets/Shared/Components/UserAccuracyScoreComponent.vue";
 import VueGridLayout, {GridLayout, GridItem} from 'vue-grid-layout-v3'
 import ModsPerDay from "@jsAssets/Shared/Widgets/User/mods-per-day.vue";
 
@@ -44,6 +45,7 @@ export default {
         GridLayout,
         TrendingNewsComponent,
         RecentlyAddedTermsComponent,
+        UserAccuracyScoreComponent,
         ModsPerHour,
         ModsPerDay
     },
@@ -56,6 +58,7 @@ export default {
             layout: [
                 {"x":0,"y":0,"w":1,"h":1,"i":"mph", "c": 'ModsPerHour'},
                 {"x":1,"y":0,"w":1,"h":1,"i":"mpd", "c": 'ModsPerDay'},
+                {"x":2,"y":0,"w":1,"h":1,"i":"uac", "c": 'UserAccuracyScoreComponent'},
                 {"x":0,"y":1,"w":2,"h":3.2,"i":"tnc", "c": 'TrendingNewsComponent', "props": {canAddTrend: this.canAddTrend}},
                 {"x":2,"y":1,"w":2,"h":4.2,"i":"ratc", "c": 'RecentlyAddedTermsComponent'}
             ]

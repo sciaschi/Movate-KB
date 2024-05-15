@@ -1,7 +1,7 @@
 <template>
     <admin-navigation />
 
-    <div class="container float-right pt-4 pr-4 text-white of-y-scroll">
+    <div class="admin-layout-container pt-4 pr-4 text-white of-y-scroll">
         <slot />
     </div>
 </template>
@@ -30,3 +30,11 @@ export default {
     }
 }
 </script>
+
+<style>
+.admin-layout-container {
+    height:100vh;
+    margin-left: 330px;
+    max-width: calc(100% - 330px);
+}
+</style>

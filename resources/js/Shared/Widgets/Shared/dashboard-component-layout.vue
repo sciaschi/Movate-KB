@@ -1,7 +1,7 @@
 <script>
 
 export default {
-    name: "component-layout",
+    name: "dashboard-component-layout",
     props: {
         id: '',
         header: '',

@@ -74,12 +74,6 @@ export default {
         font-size: 50px;
         font-weight:bold;
     }
-    .per-up {
-
-    }
-    .per-down {
-
-    }
     .per-none {
 
         color: #9ca3af;

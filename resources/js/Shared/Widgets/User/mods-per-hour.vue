@@ -54,15 +54,7 @@ export default {
     },
     mounted() {
         this.pollingLoop = setInterval(this.getModsPerHour, 10000);
-        let hoursWorked = moment(this.cookies.get('cur-time')).diff(this.cookies.get('start-time'), 'hours') - 1;
-
-        if(hoursWorked > 0 && hoursWorked <= 8) {
-            let modsCount   = this.cookies.get('page-count') * 12;
-
-            this.modsPerHour = (modsCount / hoursWorked).toFixed(2)
-        } else {
-            this.modsPerHour = 0
-        }
+        this.getModsPerHour()
     },
     beforeUnmount() {
         clearInterval(this.pollingLoop);

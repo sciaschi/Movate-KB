@@ -51,9 +51,11 @@
 
 <script>
 import { Link } from "@inertiajs/inertia-vue3";
+import route from "ziggy-js/src/js";
 
 export default {
     name: "AdminNavigation",
+    methods: {route},
     components: {
         Link
     },

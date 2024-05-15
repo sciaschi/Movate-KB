@@ -97,10 +97,13 @@ header {
 
 .header-content {
     margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
 }
 
 .sidebar {
-    width:15%;
+    width:300px;
 }
 
 .trend-card {
@@ -200,8 +203,6 @@ header {
     padding: 6px 12px;
     cursor: pointer;
 }
-
-
 
 /*******    Buttons      ********/
 .action-btn {
