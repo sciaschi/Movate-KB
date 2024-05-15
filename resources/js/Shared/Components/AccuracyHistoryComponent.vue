@@ -1,106 +1,93 @@
 <template>
-    <div class="header-content">
-        <input type="text" id="datepicker" placeholder="Pick a Date" style="width: 350px;">
+    <div class="historical-container">
+        <fx-table :columns="this.columns" :ajax="ajax" :editing="editing" @edited="saveEdits">
+            <template #actions>
+                <div class="header-content">
+                    <VueDatePicker ref="dateSelectorRef" v-model="selectedDate"  @update:model-value="setDate" :enable-time-picker="false"></VueDatePicker>
+                    <primary-button v-if="selectedDate && this.$page.props.auth.user.role[0] === 'Admin'" @click="this.editing = !this.editing"><i class="fa fa-pen-to-square pr-1"></i> Edit Audit </primary-button>
+                </div>
+            </template>
+        </fx-table>
     </div>
-    <table class="history-table">
-        <thead>
-            <tr>
-                <th>Moderated Name</th>
-                <th>Flagged?</th>
-                <th>Is Correct?</th>
-            </tr>
-        </thead>
-    </table>
 </template>
 
 <script>
-import DataTable from "datatables.net";
 import moment from "moment";
-
+import FxTable from "../Widgets/fx-table.vue";
+import route from "ziggy-js/src/js";
+import VueDatePicker from '@vuepic/vue-datepicker';
+import CreateButton from "../Widgets/create-button.vue";
+import PrimaryButton from "../Widgets/primary-button.vue";
+import Pagaination from "../Widgets/pagination.vue";
 export default {
     name: "AccuracyHistoryComponent",
+    components: {
+        Pagaination,
+        PrimaryButton,
+        FxTable,
+        VueDatePicker,
+        CreateButton
+    },
+    props: {
+        data: Object
+    },
     data () {
         return {
-            historicalData: null,
+            columns: [],
+            historicalData: this.data,
+            ajax: '',
             selectedDate: null,
-            table: null
+            editing: false
         }
     },
     methods: {
         getHistoricalData: function (date) {
-            var context = this;
-
-            axios.post(route('admin.get-accuracy-history'), {
-                'user_id': route().params.id,
-                'filter_date': moment(date).utc().format('YYYY-MM-DD'),
-            }).then(function(res) {
-                var response = res.data;
-                if(response.status == true && response.data)
-                {
-                    context.generateTable(response.data);
-                }
+            this.ajax = route('get-accuracy-history', {
+                'user_id': route().params.id ?? this.$page.props.auth.user.id,
+                'filter_date': moment(date).format('YYYY-MM-DD'),
+                'page': 1
             });
         },
-        generateTable: function (data) {
-            this.historicalData = data;
-
-            if(this.table)
-            {
-                this.table.clear().draw();
-                this.table.rows.add(data); // Add new data
-                this.table.columns.adjust().draw(); // Redraw the DataTable
-            }
-        }
+        setDate: function (date) {
+            this.getHistoricalData(date);
+        },
+        saveEdits: function (data) {
+            axios.post(route('admin.update-accuracy-history', route().params.id), {
+                'user_id': route().params.id,
+                'date': moment(this.selectedDate).format('YYYY-MM-DD'),
+                'data': data
+            }).then((e) => {
+                this.editing = false;
+                console.log(e);
+            })
+        },
     },
-    mounted: function () {
-        this.datePicker = jQuery( "#datepicker" ).datepicker();
-
-        this.datePicker.on('change', (e) => {
-            this.getHistoricalData(e.target.value);
-        });
-
-        this.table = new DataTable('.history-table', {
-            data: this.historicalData,
-            columns: [
-                {
-                    data: 'username',
-                    name: 'Moderated Name'
+    created() {
+        this.columns = [
+            {
+                id: 'username',
+                name: 'Moderated Term',
+            },
+            {
+                id: 'mod_flagged',
+                name: 'Flagged?',
+                render: function ( data ) {
+                    return data.mod_flagged ? '<i class="fa-regular fa-flag text-green-600"></i>'
+                        : '<i class="fa-regular fa-flag text-red-600"></i>'
+                }
+            },
+            {
+                id: 'is_correct',
+                name: 'Is Correct?',
+                render: function (data) {
+                    return data.is_correct ? '<i class="fa-solid fa-check text-green-600"></i>'
+                        : '<i class="fa-solid fa-ban text-red-600"></i>'
                 },
-                {
-                    data: 'mod_flagged',
-                    name: 'Flagged?',
-                    render: function ( data, type, row ) {
-                        // If display or filter data is requested, format the date
-                        if ( type === 'display') {
-                            return data ? '<i class="fa-regular fa-flag text-green-600"></i>'
-                                : '<i class="fa-regular fa-flag text-red-600"></i>'
-                        }
-
-                        // Otherwise the data type requested (`type`) is type detection or
-                        // sorting data, for which we want to use the integer, so just return
-                        // that, unaltered
-                        return data;
-                    }
-                },
-                {
-                    data: 'is_correct',
-                    name: 'Is Correct?',
-                    render: function ( data, type, row ) {
-                        // If display or filter data is requested, format the date
-                        if ( type === 'display') {
-                            return data ? '<i class="fa-solid fa-check text-green-600"></i>'
-                                : '<i class="fa-solid fa-ban text-red-600"></i>'
-                        }
-
-                        // Otherwise the data type requested (`type`) is type detection or
-                        // sorting data, for which we want to use the integer, so just return
-                        // that, unaltered
-                        return data;
-                    }
-                },
-
-            ]
-        });
+                edit: {
+                    type:'checkbox'
+                }
+            },
+        ]
     }
 }
 </script>

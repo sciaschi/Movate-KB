@@ -40,6 +40,13 @@
                     font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-slate-400
                     dark:hover:text-gray-300 dark:hover:border-gray-300 focus:outline-none light:focus:text-gray-700
                     light:focus:border-gray-300 dark:focus:text-slate-300 dark:focus:border-gray-300
+                    transition duration-150 ease-in-out" :href="route('audits')" :class="$page.url === route('audits') ? 'active' : ''">
+                            Audits
+                        </Link>
+                        <Link class="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm
+                    font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-slate-400
+                    dark:hover:text-gray-300 dark:hover:border-gray-300 focus:outline-none light:focus:text-gray-700
+                    light:focus:border-gray-300 dark:focus:text-slate-300 dark:focus:border-gray-300
                     transition duration-150 ease-in-out" :href="route('admin.dashboard')" v-if="$page.props.auth.user.role == 'Admin'">
                             Admin Dashboard
                         </Link>

@@ -51,8 +51,6 @@ export default {
             Inertia.visit(route('terms', term))
         },
         setBindings: function() {
-            let context = this;
-
             document.querySelectorAll('.term-link').forEach((link) => {
                 link.onclick = () => {
                     this.goToTerm(link.dataset.term)

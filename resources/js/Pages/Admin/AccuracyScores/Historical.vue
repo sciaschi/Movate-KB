@@ -1,12 +1,13 @@
 <template>
     <header>
-        <span class="header-text">{{headerText}}</span>
+        <span class="header-text">{{ 'Historical Accuracy Scores - ' + this.$props.user}}</span>
     </header>
-    <AccuracyHistoryComponent/>
+    <accuracy-history-component></accuracy-history-component>
 </template>
 
 <script>
-import AccuracyHistoryComponent from "../../../Shared/Components/AccuracyHistoryComponent";
+import AccuracyHistoryComponent from "@jsAssets/Shared/Components/AccuracyHistoryComponent";
+import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
 
 export default {
     name: "Historical",
@@ -15,14 +16,18 @@ export default {
     },
     data () {
       return {
-          headerText: 'Historical Accuracy Scores'
+          columns: [],
+          data: []
       }
     },
     components: {
+        FxTable,
         AccuracyHistoryComponent
     },
+    methods: {
+
+    },
     mounted: function () {
-        this.headerText = 'Historical Accuracy Scores - ' + this.$props.user
     }
 }
 </script>

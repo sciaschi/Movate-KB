@@ -18,11 +18,11 @@ Route::middleware('guest')->get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function() {
-    Route::get('/dashboard'               , 'App\Http\Controllers\User\Dashboard\DashboardController@index')->name('dashboard');
-    Route::get('/user/get-mods-per-hour'  , 'App\Http\Controllers\User\UserController@getModerationsPerHour')->name('mods-per-hour');
+    Route::get('/dashboard'                     , 'App\Http\Controllers\User\Dashboard\DashboardController@index')->name('dashboard');
+    Route::get('/user/get-mods-per-hour'        , 'App\Http\Controllers\User\UserController@getModerationsPerHour')->name('mods-per-hour');
 
-    Route::get('/trend/get-trends'  , 'App\Http\Controllers\Trend\TrendController@getTrends')->name('get_trends');
-    Route::post('/trend/store'      , 'App\Http\Controllers\Trend\TrendController@storeTrendUrl')->name('add_trend');
+    Route::get('/trend/get-trends'              , 'App\Http\Controllers\Trend\TrendController@getTrends')->name('get_trends');
+    Route::post('/trend/store'                  , 'App\Http\Controllers\Trend\TrendController@storeTrendUrl')->name('add_trend');
 
     Route::get('/term/get-recently-added-terms' , 'App\Http\Controllers\Term\TermController@getRecentlyAddedTerms')->name('get-recently-added-terms');
     Route::get('/term/get-all-terms'            , 'App\Http\Controllers\Term\TermController@getAllTerms')->name('get-all-terms');
@@ -32,13 +32,17 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/term/add-term'                , 'App\Http\Controllers\Term\TermController@addTerm')->name('add-term');
     Route::post('/term/delete-term-link'        , 'App\Http\Controllers\Term\TermController@deleteTermLink')->name('delete-term-link');
 
-    Route::get('/search-terms/{term?}'         , 'App\Http\Controllers\Term\TermController@index')->name('terms');
-    Route::post('/search-term' , 'App\Http\Controllers\Term\TermController@searchTerm')->name('search-term');
-    Route::post('/search-term/store'   , 'App\Http\Controllers\Term\TermController@store')->name('add_term');
+    Route::get('/search-terms/{term?}'          , 'App\Http\Controllers\Term\TermController@index')->name('terms');
+    Route::post('/search-term'                  , 'App\Http\Controllers\Term\TermController@searchTerm')->name('search-term');
+    Route::post('/search-term/store'            , 'App\Http\Controllers\Term\TermController@store')->name('add_term');
 
-    Route::get('/translate'       , 'App\Http\Controllers\Translate\TranslateController@index')->name('translate');
-    Route::get('/get-languages'   , 'App\Http\Controllers\Translate\TranslateController@getLanguages')->name('get-languages');
-    Route::post('/translate-text' , 'App\Http\Controllers\Translate\TranslateController@translate')->name('translate-text');
+    Route::get('/audits'                        , 'App\Http\Controllers\User\UserController@audits')->name('audits');
+    Route::get('/get-user-accuracy/{id}'        , 'App\Http\Controllers\User\UserController@getAccuracy')->name('get-user-accuracy');
+    Route::get('/accuracy-scores/get-history'  , 'App\Http\Controllers\AccuracyScores\AccuracyScoresController@getHistoricalData')->name('get-accuracy-history');
+
+    Route::get('/translate'                     , 'App\Http\Controllers\Translate\TranslateController@index')->name('translate');
+    Route::get('/get-languages'                 , 'App\Http\Controllers\Translate\TranslateController@getLanguages')->name('get-languages');
+    Route::post('/translate-text'               , 'App\Http\Controllers\Translate\TranslateController@translate')->name('translate-text');
 });
 
 

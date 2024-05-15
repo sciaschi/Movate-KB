@@ -27,7 +27,7 @@
                         return "<a href=" + el.link_url + " target=\"_blank\">"+ el.link_url +"</a>"
                     }
                 }
-            ]' :data="this.term.links"></fx-table>
+            ]' :data="this.links"></fx-table>
         </div>
     </div>
 </template>
@@ -45,11 +45,22 @@ export default {
     },
     data () {
         return {
+            links: []
         }
     },
     methods: {
         utils: function() {
             return utils
+        }
+    },
+    watch: {
+        term: {
+            handler(newValue, oldValue) {
+                this.links = newValue.links ?? []
+                console.log(this.links);
+
+            },
+            deep: true
         }
     }
 }

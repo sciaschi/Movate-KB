@@ -1,17 +1,19 @@
 <template>
-    <header class="text-center">
-        <span class="header-text">Average Team Accuracy</span>
-    </header>
-    <canvas id="team-accuracy-graph"></canvas>
+    <dashboard-component-layout header="Average Team Accuracy">
+        <canvas id="team-accuracy-graph" class="ml-2 mr-2 mb-2"></canvas>
+    </dashboard-component-layout>
 </template>
 
 <script>
 import Chart from 'chart.js/auto';
 import moment from "moment";
+import route from "ziggy-js/src/js";
+import DashboardComponentLayout from "../Shared/dashboard-component-layout.vue";
 
 export default {
     name: "team-accuracy-graph",
     components: {
+        DashboardComponentLayout,
         Chart
     },
     data () {
@@ -22,12 +24,10 @@ export default {
     },
     methods: {
         getData: function (dates) {
-            var context = this;
-
             axios.post(route('admin.get-team-averages'), {
                 dates: dates
-            }).then(function(e) {
-                context.generate(e.data.data);
+            }).then((e) => {
+                this.generate(e.data.data);
             });
         },
         generate: function(data) {
