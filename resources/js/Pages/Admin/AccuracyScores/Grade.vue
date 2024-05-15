@@ -78,15 +78,10 @@ export default {
             this.users = res.data.data;
         },
         gradeAccuracy: function(e) {
-            var correct         = 0,
-                totalCount      = this.data.length,
-                selectedChecks  = document.querySelectorAll('input[type=radio]:checked'),
+            var selectedChecks  = document.querySelectorAll('input[type=radio]:checked'),
                 postData        = []
 
             this.data.forEach(function(val, index) {
-                if(selectedChecks[index].dataset.correct == 'true') {
-                    correct++;
-                }
                 postData.push({
                     'username': val.name,
                     'mod_flagged': val.flagged,
@@ -94,11 +89,8 @@ export default {
                 })
             });
 
-            var accuracy = (correct / totalCount) * 100;
-
             axios.post(route('admin.create-accuracy-score'), {
-                'user_id': this.$props.gradingUser == null ? this.selected : this.$props.gradingUser.id,
-                'accuracy': accuracy,
+                'user_id': this.$props.gradingUser.id ?? this.selected,
                 'data': postData
             })
         }

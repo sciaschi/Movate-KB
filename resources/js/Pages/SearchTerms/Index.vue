@@ -1,6 +1,6 @@
 <template>
     <div class="overflow-hidden shadow-sm sm:rounded-lg w-100 d-inline-block">
-        <div class="p-6 h-100 w-100 d-inline-block" style="min-height: 85vh;">
+        <div class="mt-6 h-100 w-100 d-inline-block" style="min-height: 85vh;">
             <div class="container row">
                 <div id="username_sidebar" class="col-xs-12 col-sm-12 col-md-4 bg-light shadow-sm sm:rounded-lg dark:bg-slate-700 dark:text-slate-400">
                     <div class="input-group mb-3 mt-3">

@@ -4,7 +4,7 @@
     </header>
 
     <div class="container table-container">
-        <fx-table @vue:updated="tableMounted" class="users-table" :ajaxRoute="route('admin.users.get-users-with-accuracies')" :columns="columns">
+        <fx-table @vue:updated="tableMounted" class="users-table" :ajax="route('admin.users.get-users-with-accuracies')" :columns="columns">
             <template v-slot:actions>
                 <create-button @click="addNewAccuracyData()"><i class="fa fa-plus pr-1"></i> Add New</create-button>
             </template>
@@ -17,8 +17,8 @@
 import AdminLayout from "../../../Shared/Admin/AdminLayout";
 import {Inertia} from "@inertiajs/inertia";
 import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
-import route from "ziggy-js";
 import CreateButton from "@jsAssets/Shared/Widgets/create-button.vue";
+import route from "ziggy-js/src/js";
 
 export default {
     name: "Index",
@@ -37,8 +37,8 @@ export default {
         viewHistoricalData: function(id) {
             Inertia.visit(route('admin.accuracy-history', {id: id}));
         },
-        addNewAccuracyData: function(id) {
-            Inertia.visit(route('admin.grade-accuracy'));
+        addNewAccuracyData: function(id = null) {
+            id ? Inertia.visit(route('admin.grade-accuracy', {id: id})) : Inertia.visit(route('admin.grade-accuracy'));
         },
         tableMounted: function () {
             document.querySelectorAll('.users-table tbody button.vhd').forEach((e) => {
@@ -63,21 +63,18 @@ export default {
                 name: 'Name'
             },
             {
-                id: 'email',
-                name: 'Email'
+                id: 'accuracy_score',
+                name: 'Latest Accuracy Score'
             },
             {
-                data: 'accuracy_score',
-                name: 'Accuracy Score',
-                render: function (data) {
-                    return data.accuracy_score + '% ' + ' (Last Update: ' + data.last_updated + ')';
-                }
+                id: 'last_updated',
+                name: 'Last Updated'
             },
             {
                 id: null,
                 render: function(data) {
                     return '<button title="View Historical Accuracies" class="vhd action-btn" data-id="' + data.id + '"><i class="fa-regular fa-eye"></i></button>' +
-                        '<button title="Create new Accuracy Data" class="ana action-btn" data-id="' + data.id + '"><i class="fa-solid fa-circle-plus"></i></button>';
+                           '<button title="Create new Accuracy Data" class="ana action-btn" data-id="' + data.id + '"><i class="fa-solid fa-circle-plus"></i></button>';
                 },
                 name: 'Actions'
             },

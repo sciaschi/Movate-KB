@@ -14,9 +14,9 @@
 <script>
 import AdminLayout from "../../../Shared/Admin/AdminLayout";
 import {Inertia} from "@inertiajs/inertia";
-import route from "ziggy-js";
-import FxTable from "@jsAssets/Shared/Widgets/fx-table.vue";
+import FxTable from "@jsAssets/Shared/Widgets/fx-table";
 import SuccessButton from "../../../Shared/Widgets/success-button.vue";
+import route from "ziggy-js/src/js";
 
 export default {
     name: "Index",

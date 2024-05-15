@@ -28,26 +28,24 @@ class AdminUsersController extends Controller
     public function getAllUsersWithAccuracies() {
         $data = User::with(['accuracy_scores' => function($q) {
             $q->latest();
-        }])->get(['id', 'name', 'email']);
-
-        $mappedData = $data->map(function($e){
+        }])->paginate(15)->through(function ($val){
+            $accuracyScores = $val->accuracy_scores()->first();
             return [
-                'id'             => $e->id,
-                'name'           => $e->name,
-                'email'          => $e->email,
-                'accuracy_score' => $e->accuracy_scores ? (string)$e->accuracy_scores->first()->accuracy_grade : 'N/A',
-                'last_updated'   => $e->accuracy_scores ? Carbon::parse($e->accuracy_scores->first()->updated_at)->format('m/d/Y') : ''
+                'id'             => $val->id,
+                'name'           => $val->name,
+                'accuracy_score' => $accuracyScores ? $accuracyScores->accuracy_grade . '%' : 'N/A',
+                'last_updated'   => $accuracyScores ? Carbon::parse($accuracyScores->updated_at)->format('m/d/Y') : 'No Audits Yet'
             ];
         });
 
         return response()->json([
             'status' => true,
-            'data' => $mappedData
+            'data' => $data
         ]);
     }
 
     public function getAllUsers() {
-        $data = User::with('roles')->get()->map(function($e){
+        $data = User::with('roles')->paginate(15)->through(function($e){
             return [
                 'id'             => $e->id,
                 'name'           => $e->name,
