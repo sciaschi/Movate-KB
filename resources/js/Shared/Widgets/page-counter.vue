@@ -56,8 +56,8 @@ export default {
     #page-counter {
         width: 4em;
         text-align: center;
+        border-radius: unset;
     }
-
     #sub-btn {
         border-radius: 5px 0 0 5px !important;
     }

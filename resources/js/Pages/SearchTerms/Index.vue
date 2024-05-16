@@ -170,15 +170,12 @@ export default {
                 })
 
                 this.searchCategories[catIndex].terms.push(term)
-            }
-            else
-            {
+            } else {
                 let catIndex = this.searchCategories.findIndex(x => {
                     return x.name === 'Uncategorized'
                 })
 
                 this.searchCategories[catIndex].terms.push(term)
-
             }
 
             this.searchCategories[searchCatIndex].terms.splice(termIndex, 1);
@@ -186,7 +183,7 @@ export default {
             this.searchCategories.forEach(function(cat) {
                 cat.terms.sort((a,b) => a.term.localeCompare(b.term))
             })
-
+            console.log(term);
             this.searchTerms[searchTermIndex] = term
             this.selectedTerm = term;
 
