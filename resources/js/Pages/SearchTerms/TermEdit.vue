@@ -115,8 +115,7 @@ export default {
                 })
         },
         updateTerm: function () {
-            var context   = this,
-                inputData = {
+            var inputData = {
                     id: this.term.id,
                     term: document.getElementById('edit-term-val').value,
                     rating: document.getElementById('edit-class').value,
@@ -128,9 +127,9 @@ export default {
             this.$emit('loading', true)
 
             axios.put('/term/update-term', inputData)
-            .then(function (response) {
-                context.$emit('updateEditTerm', response.data.data);
-                context.$emit('loading', false)
+            .then((response) => {
+                this.$emit('updateEditTerm', response.data.data);
+                this.$emit('loading', false)
             })
             .catch(function (error) {
                 console.log(error);
@@ -148,8 +147,11 @@ export default {
         }
     },
     mounted() {
-        this.links = this.term && this.term.links ? [...this.term.links] : [];
-        this.termCategory = this.term.categories && this.term.categories.length ? this.term.categories[0].id : 0;
+        console.log(this.term);
+
+        this.links = this.term.links ? [...this.term.links] : [];
+        let check = this.term.categories && this.term.categories ? this.term.categories[0].id : '0'
+        this.termCategory = this.term.category ?? check;
 
         document.getElementById("edit-class").addEventListener('input', function() {
             var val = utils.convertRating($(this).val());

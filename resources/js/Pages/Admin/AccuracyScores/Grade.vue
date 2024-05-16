@@ -62,6 +62,7 @@ export default {
             Papa.parse(e.target.files[0], {
                 skipEmptyLines: true,
                 complete: (res) => {
+                    console.log('res', res);
                     console.log('res.data', res.data);
                     this.data = res.data.map(function (x) {
                         return {

@@ -203,15 +203,18 @@ export default {
             this.editedValues = [];
         },
         checkEdits: function(data) {
-            for(let i = 0; i < data.length; i++) {
-                let dataVal = data[i],
-                    datasetIndex = this.dataset.findIndex(x => x.id === dataVal.id),
-                    editVal = this.editedValues.find(x => x.id === dataVal.id);
+            if(data) {
+                for(let i = 0; i < data.length; i++) {
+                    let dataVal = data[i],
+                        datasetIndex = this.dataset.findIndex(x => x.id === dataVal.id),
+                        editVal = this.editedValues.find(x => x.id === dataVal.id);
 
-                if(editVal) {
-                    this.dataset[datasetIndex] = editVal;
+                    if(editVal) {
+                        this.dataset[datasetIndex] = editVal;
+                    }
                 }
             }
+
         }
     },
     mounted() {
