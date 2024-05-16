@@ -82,6 +82,7 @@ class AccuracyScore extends Model
             $score = $scores->first();
 
             return [
+                'id'            => $score->user_accuracy_scores->id,
                 'grading_admin' => $score->admin_id ? User::find($score->admin_id)->first(['name'])->name : 'Unknown',
                 'data'          => $mappedScores,
                 'accuracyGrade' => $score->user_accuracy_scores->accuracy_grade

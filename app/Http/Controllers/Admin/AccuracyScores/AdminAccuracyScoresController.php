@@ -123,8 +123,13 @@ class AdminAccuracyScoresController extends Controller
      * @return JsonResponse
      */
     public function createAccuracyScore(Request $request) {
+
         $data = $request->all();
 
+        $request->validate([
+            'user_id' => 'required|integer|exists:App\Models\User,id',
+            'data' => 'required|array',
+        ]);
 
         $addData = collect(array_filter($data['data']))->map(function($el) use ($data) {
             return [
@@ -184,6 +189,13 @@ class AdminAccuracyScoresController extends Controller
      */
     public function updateHistoricalData(Request $request) {
         $rawData = $request->all();
+
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'date' => 'required|date',
+            'data' => 'required|array'
+        ]);
+
         $data = $rawData['data'];
         $correct = 0;
 
@@ -201,7 +213,7 @@ class AdminAccuracyScoresController extends Controller
 
         $accuracyScore = ($correct / count($userAccScores['data'])) * 100;
 
-        $accuracyUpdate = UserAccuracyScore::where('user_id', '=', $rawData['user_id'])->update([
+        $accuracyUpdate = UserAccuracyScore::where('user_id', '=', $rawData['user_id'])->whereDate('created_at', '=',  $rawData['date'])->update([
             'accuracy_grade' => $accuracyScore
         ]);
 
