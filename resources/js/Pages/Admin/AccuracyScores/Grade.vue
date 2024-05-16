@@ -63,37 +63,111 @@ export default {
                 skipEmptyLines: true,
                 complete: (res) => {
                     console.log('res', res);
-                    console.log('res.data', res.data);
-                    this.data = res.data.map(function (x) {
-                        return {
-                            'name': x[2],
-                            'flagged': x[1] == 'Moderator Approved Unselected',
+                    let objects = [],
+                        categories = [];
+
+                    let flagConditions = [],
+                        unFlagConditions = [],
+                        subCategories = [],
+                        condition = null,
+                        prevCategory = null,
+                        subCategory = null,
+                        prevSubCategory = null,
+                        category = null;
+
+
+                    let test = res.data.forEach((x) => {
+                        if(x[0] !== '' && x[1] === '') {
+                            category = x[0];
+                            categories.push(category);
+                        }
+
+                        if(x[0] !== '' && x[1] !== '') {
+                            subCategory = x[0];
+                        }
+
+                        if(x[1] !== '') {
+                            condition = x[1];
+                        }
+
+                        if(condition && x[2] !== '') {
+                            if(condition === 'Flag Condition') {
+                                flagConditions.push({
+                                    'condition': x[2],
+                                    'examples': x[4]
+                                });
+                            } else {
+                                unFlagConditions.push({
+                                    'condition': x[2],
+                                    'examples': x[4]
+                                });
+                            }
+                        }
+
+                        if(subCategory !== prevSubCategory) {
+                            subCategories.push({
+                                'name': subCategory,
+                                'conditions': {
+                                    'flags': flagConditions,
+                                    'unflags': unFlagConditions
+                                }
+                            });
+
+                            prevSubCategory = subCategory;
+                            flagConditions = [];
+                            unFlagConditions = [];
+                        }
+
+                        if(category !== prevCategory) {
+                            let obj = {
+                                'name': prevCategory,
+                                'sub_categories': subCategories,
+                            }
+
+                            console.log(obj);
+
+                            objects.push(obj);
+
+                            prevCategory = category;
+                            subCategories = [];
                         }
                     });
-                    this.data.splice(this.data.length, 1)
+
+                    console.log('test', test);
+                    console.log('categories', categories);
+                    // this.data = res.data.map(function (x) {
+                    //     return {
+                    //         'name': x[2],
+                    //         'flagged': x[1] == 'Moderator Approved Unselected',
+                    //     }
+                    // });
+                    // this.data.splice(this.data.length, 1)
                 }
             });
+        },
+        getFlagConditions: function() {
+
         },
         getMods: async function(e) {
             let res = await axios.get(route('admin.accuracy-scores.get-mods'));
             this.users = res.data.data;
         },
         gradeAccuracy: function(e) {
-            var selectedChecks  = document.querySelectorAll('input[type=radio]:checked'),
-                postData        = []
-
-            this.data.forEach(function(val, index) {
-                postData.push({
-                    'username': val.name,
-                    'mod_flagged': val.flagged,
-                    'is_correct': (selectedChecks[index].dataset.correct === 'true'),
-                })
-            });
-
-            axios.post(route('admin.create-accuracy-score'), {
-                'user_id': this.$props.gradingUser.id ?? this.selected,
-                'data': postData
-            })
+            // var selectedChecks  = document.querySelectorAll('input[type=radio]:checked'),
+            //     postData        = []
+            //
+            // this.data.forEach(function(val, index) {
+            //     postData.push({
+            //         'username': val.name,
+            //         'mod_flagged': val.flagged,
+            //         'is_correct': (selectedChecks[index].dataset.correct === 'true'),
+            //     })
+            // });
+            //
+            // axios.post(route('admin.create-accuracy-score'), {
+            //     'user_id': this.$props.gradingUser.id ?? this.selected,
+            //     'data': postData
+            // })
         }
     },
     mounted() {
